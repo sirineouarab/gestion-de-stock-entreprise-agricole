@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tables Management</title>
+  </head>
+  <body>
+    <h2>Liste des Produits</h2>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Désignation</th>
+          <th>Quantité en Stock</th>
+          <th>Prix HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for produit in produits %}
+        <tr>
+          <td>{{ produit.CodeP }}</td>
+          <td>{{ produit.Designation }}</td>
+          <td>{{ produit.qteStock }}</td>
+          <td>{{ produit.HTProd }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>
