@@ -1,5 +1,5 @@
 from django import forms
-from .models import Produit, Client, Fournisseur
+from .models import Produit, Client, Fournisseur, Centre, Employe
 
 class ProduitForm(forms.ModelForm):
     class Meta:
@@ -31,4 +31,25 @@ class FournisseurForm(forms.ModelForm):
         'adresseF': forms.TextInput(attrs={'class':'form-control'}),
         'telephoneF': forms.NumberInput(attrs={'class':'form-control'}),
         'solde': forms.NumberInput(attrs={'class':'form-control'})
+        }
+
+class CentreForm(forms.ModelForm):
+    class Meta:
+        model = Centre
+        fields = ['DesignationCentre']
+        widgets = {
+        'DesignationCentre': forms.TextInput(attrs={'class':'form-control'}),
+        }
+
+
+class EmployeForm(forms.ModelForm):
+    class Meta:
+        model = Employe
+        fields = ['nomPrenomE', 'adresseE','telephoneE', 'salaireJour','centre']
+        widgets = {
+        'nomPrenomE': forms.TextInput(attrs={'class':'form-control'}),
+        'adresseE': forms.TextInput(attrs={'class':'form-control'}),
+        'telephoneE': forms.NumberInput(attrs={'class':'form-control'}),
+        'salaireJour': forms.NumberInput(attrs={'class':'form-control'}),
+        'centre': forms.Select(attrs={'class':'form-control'}),
         }

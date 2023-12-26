@@ -263,6 +263,172 @@
       </table>
     </div>
 
+    <!-- Centres -->
+
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Centres</h2>
+
+          <div>
+            <a href="{% url 'print centres' %}" class="btn btn-info"
+              >Imprimer</a
+            >
+            <a href="{% url 'new centre' %}" class="btn btn-primary"
+              >Nouveau Centre +</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <form method="get" action="{% url 'search centre' %}" class="form-inline">
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="search"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Designation</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if centres|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for centre in centres %}
+          <tr>
+            <td>{{ centre.CodeCentre }}</td>
+            <td>{{ centre.DesignationCentre }}</td>
+
+            <td>
+              <a
+                href="{% url 'edit centre' centre.CodeCentre %}"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
+            </td>
+            <td>
+              <a
+                href="{% url 'delete centre' centre.CodeCentre %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Employés -->
+
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Employés</h2>
+
+          <div>
+            <a href="{% url 'print employes' %}" class="btn btn-info"
+              >Imprimer</a
+            >
+            <a href="{% url 'new employe' %}" class="btn btn-primary"
+              >Nouveau Employé +</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <form
+        method="get"
+        action="{% url 'search employe' %}"
+        class="form-inline"
+      >
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="search"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Nom Prénom</th>
+            <th scope="col">Adresse</th>
+            <th scope="col">Telephone</th>
+            <th scope="col">Salaire</th>
+            <th scope="col">Centre</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if employes|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for employe in employes %}
+          <tr>
+            <td>{{ employe.CodeE }}</td>
+            <td>{{ employe.nomPrenomE }}</td>
+            <td>{{ employe.adresseE }}</td>
+            <td>{{ employe.telephoneE }}</td>
+            <td>{{ employe.salaireJour }}</td>
+            <td>{{ employe.centre }}</td>
+
+            <td>
+              <a
+                href="{% url 'edit employe' employe.CodeE %}"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
+            </td>
+            <td>
+              <a
+                href="{% url 'delete employe' employe.CodeE %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
     {% endblock %}
   </body>
 </html>

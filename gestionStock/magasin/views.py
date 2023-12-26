@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse, FileResponse
-from .models import Produit, Client,Fournisseur
-from .forms import ProduitForm,ClientForm, FournisseurForm
+from .models import Produit, Client,Fournisseur, Centre,Employe
+from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm
 
 import io 
 from reportlab.pdfgen import canvas
@@ -13,8 +13,10 @@ def tablesManagement(request):
     produits = Produit.objects.all()
     clients = Client.objects.all()
     fournisseurs = Fournisseur.objects.all()
+    centres = Centre.objects.all()
+    employes= Employe.objects.all()
 
-    return render(request, 'magasin/tablesmanagement.html', {'produits': produits,'clients': clients,'fournisseurs':fournisseurs})
+    return render(request, 'magasin/tablesmanagement.html', {'produits': produits,'clients': clients,'fournisseurs':fournisseurs,'centres':centres,'employes':employes})
 
 def achat(request):
     return HttpResponse('achat page')
@@ -61,6 +63,29 @@ def newFournisseur(request):
         form = FournisseurForm() 
     return render(request,"magasin/addFournisseur.html",{"form":form})
 
+def newCentre(request):
+    if request.method == 'POST':
+        form = CentreForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = CentreForm()
+        return redirect('tablesManagement')
+    else:
+        form = CentreForm() 
+    return render(request,"magasin/addCentre.html",{"form":form})
+
+
+def newEmploye(request):
+    if request.method == 'POST':
+        form = EmployeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = EmployeForm()
+        return redirect('tablesManagement')
+    else:
+        form = EmployeForm() 
+    return render(request,"magasin/addEmploye.html",{"form":form})
+
 def deleteProduct(request, id):
     product_delete = get_object_or_404(Produit, CodeP=id)
     if request.method=='POST': 
@@ -85,8 +110,27 @@ def deleteFournisseur(request, id):
         fournisseur_delete.delete()
         return redirect('tablesManagement')
     else:
-        return render(request,"magasin/deleteFournisseur.html",{'fournisseur_delete':fournisseur_delete} )
+        return render(request,"magasin/deleteFournisseur.html",{'fournisseur':fournisseur_delete} )
     
+
+
+def deleteCentre(request, id):
+    centre_delete = get_object_or_404(Centre, CodeCentre=id)
+    if request.method=='POST': 
+        centre_delete.delete()
+        return redirect('tablesManagement')
+    else:
+        return render(request,"magasin/deleteCentre.html",{'centre':centre_delete} )
+    
+def deleteEmploye(request, id):
+    employe_delete = get_object_or_404(Employe, CodeE=id)
+    if request.method=='POST': 
+        employe_delete.delete()
+        return redirect('tablesManagement')
+    else:
+        return render(request,"magasin/deleteEmploye.html",{'Employe':employe_delete} )
+   
+
 def editProduct(request, id):
     product_edit = get_object_or_404(Produit, CodeP=id)
     if request.method=='POST':
@@ -121,6 +165,29 @@ def editFournisseur(request, id):
         fournisseur_save= FournisseurForm(instance=fournisseur_edit)
     return render(request,"magasin/editFournisseur.html",{'fournisseur':fournisseur_save})
 
+def editCentre(request, id):
+    centre_edit = get_object_or_404(Centre, CodeCentre=id)
+    if request.method=='POST':
+        centre_save= CentreForm(request.POST,request.FILES,instance=centre_edit)
+        if centre_save.is_valid():
+            centre_save.save()
+            return redirect('tablesManagement')
+    else:
+        centre_save= CentreForm(instance=centre_edit)
+    return render(request,"magasin/editCentre.html",{'centre':centre_save})
+
+
+def editEmploye(request, id):
+    employe_edit = get_object_or_404(Employe, CodeE=id)
+    if request.method=='POST':
+        employe_save= EmployeForm(request.POST,request.FILES,instance=employe_edit)
+        if employe_save.is_valid():
+            employe_save.save()
+            return redirect('tablesManagement')
+    else:
+        employe_save= EmployeForm(instance=employe_edit)
+    return render(request,"magasin/editEmploye.html",{'employe':employe_save})
+
 def searchProduct(request):
     if request.method == "GET":
         query=request.GET['search']
@@ -144,6 +211,23 @@ def searchFournisseur(request):
             fournisseurs=Fournisseur.objects.filter(nomPrenomF__contains=query)
             return render(request,'magasin/searchFournisseur.html', {'fournisseurs': fournisseurs })
     return render(request,'magasin/searchFournisseur.html')
+
+
+def searchCentre(request):
+    if request.method == "GET":
+        query=request.GET['search']
+        if query:
+            centres=Centre.objects.filter(DesignationCentre__contains=query)
+            return render(request,'magasin/searchCentre.html', {'centres': centres })
+    return render(request,'magasin/searchCentre.html')
+
+def searchEmploye(request):
+    if request.method == "GET":
+        query=request.GET['search']
+        if query:
+            employes=Employe.objects.filter(nomPrenomE__contains=query)
+            return render(request,'magasin/searchEmploye.html', {'employes': employes })
+    return render(request,'magasin/searchEmploye.html')
 
 
 def printProducts(request):
@@ -231,3 +315,62 @@ def printFournisseurs(request):
     p.save()
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename="fournisseurs.pdf")
+
+
+def printCentres(request):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter,bottomup=0)
+    textob = p.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica",14)
+
+    centres = Centre.objects.all()
+    lines = []
+
+    for centre in centres:
+        lines.append("code centre : "+str(centre.CodeCentre))
+        lines.append("designation centre : "+str(centre.DesignationCentre))
+        lines.append("==============================")
+ 
+    
+    for line in lines:
+        textob.textLine(line)
+    
+    p.drawText(textob)
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="centres.pdf")
+
+
+def printEmployes(request):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter,bottomup=0)
+    textob = p.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica",14)
+
+    employes = Employe.objects.all()
+    lines = []
+
+    for employe in employes:
+        lines.append("code employe : "+str(employe.CodeE))
+        lines.append("nom prenom employe : "+str(employe.nomPrenomE))
+        lines.append("adresse employe : "+str(employe.adresseE))
+        lines.append("telephone employe : "+str(employe.telephoneE))
+        lines.append("salaire jour : "+str(employe.salaireJour))
+        lines.append("centre : "+str(employe.centre))
+        lines.append("==============================")
+
+ 
+    
+    for line in lines:
+        textob.textLine(line)
+    
+    p.drawText(textob)
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="employes.pdf")
