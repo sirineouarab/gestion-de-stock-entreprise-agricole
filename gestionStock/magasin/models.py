@@ -20,20 +20,24 @@ class Client(models.Model):
     nomPrenomC = models.CharField(max_length=60)
     adresseC = models.CharField(max_length=60)
     telephoneC = models.CharField(max_length=20)
-    credit = models.IntegerField()
+    credit = models.IntegerField(default=0)
 
 class Fournisseur(models.Model):
     CodeF = models.AutoField(primary_key=True)
     nomPrenomF = models.CharField(max_length=60)
     adresseF = models.CharField(max_length=60)
     telephoneF = models.CharField(max_length=20)
-    solde = models.IntegerField()
+    solde = models.IntegerField(default=0)
+    def __str__(self):
+        return self.nomPrenomF
 
 class Produit(models.Model):
     CodeP = models.AutoField(primary_key=True)
     Designation = models.CharField(max_length=40)
-    qteStock = models.IntegerField()
+    qteStock = models.IntegerField(default=0)
     HTProd = models.IntegerField()
+    def __str__(self):
+        return self.Designation
 
 class Vente(models.Model):
     CodeV = models.AutoField(primary_key=True)

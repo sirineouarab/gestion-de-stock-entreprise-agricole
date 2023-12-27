@@ -7,6 +7,7 @@ urlpatterns = [
 
     path('tablesManagement/',views.tablesManagement,name='tablesManagement'),
     path('achat/',views.achat,name='achat'),
+    path('achat/<int:id>',views.achatDetails,name='achat details'),
     path('vente/',views.vente,name='vente'),
     path('transfert/',views.transfert,name='transfert'),
     path('stock/',views.stock,name='stock'),
@@ -24,6 +25,8 @@ urlpatterns = [
     path('deleteFournisseur/<int:id>',views.deleteFournisseur,name='delete fournisseur'),
     path('deleteCentre/<int:id>',views.deleteCentre,name='delete centre'),
     path('deleteEmploye/<int:id>',views.deleteEmploye,name='delete employe'),
+    path('deleteAchat/<int:id>',views.deleteAchat,name='delete achat'),
+
 
 
 
@@ -40,6 +43,10 @@ urlpatterns = [
     path('searchFournisseur/',views.searchFournisseur,name='search fournisseur'),
     path('searchCentre/',views.searchCentre,name='search centre'),
     path('searchEmploye/',views.searchEmploye,name='search employe'),
+    path('searchAchatParFournisseur/',views.searchAchatParFournisseur,name='searchAchatParFournisseur'),
+    path('searchAchatParDate/',views.searchAchatParDate,name='searchAchatParDate'),
+
+
 
 
 
@@ -53,6 +60,7 @@ urlpatterns = [
 
 
 
+    path('reglement/<int:id>',views.completerPayement,name='reglement'),
 
 
 ]

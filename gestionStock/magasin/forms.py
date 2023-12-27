@@ -1,5 +1,5 @@
 from django import forms
-from .models import Produit, Client, Fournisseur, Centre, Employe
+from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement
 
 class ProduitForm(forms.ModelForm):
     class Meta:
@@ -53,3 +53,30 @@ class EmployeForm(forms.ModelForm):
         'salaireJour': forms.NumberInput(attrs={'class':'form-control'}),
         'centre': forms.Select(attrs={'class':'form-control'}),
         }
+
+
+class ReglementForm(forms.ModelForm):
+    class Meta:
+        model = Reglement
+        fields = [ 'dateReg', 'montantReg']
+        widgets = {
+        'dateReg': forms.DateInput(attrs={'class':'form-control'}),
+        'montantReg': forms.NumberInput(attrs={'class':'form-control'}),
+        }
+
+
+
+
+
+# class AchatForm(forms.ModelForm):
+#     class Meta:
+#         model = Achat, Produit
+#         fields = ['PayeEntierement', 'dateAchat','fournisseur', 'produit','qteAchat','HTAchat']
+#         widgets = {
+#         'PayeEntierement': forms.CheckboxInput(attrs={'class':'form-control'}),
+#         'dateAchat': forms.DateInput(attrs={'class':'form-control'}),
+#         'fournisseur': forms.Select(attrs={'class':'form-control'}),
+#         'produit': forms.Select(attrs={'class':'form-control'}),
+#         'qteAchat': forms.NumberInput(attrs={'class':'form-control'}),
+#         'HTAchat': forms.NumberInput(attrs={'class':'form-control'}),
+#         }

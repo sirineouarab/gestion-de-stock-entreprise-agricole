@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'magasin/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Achat</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Achats</h2>
+          <div>
+            <a href="" class="btn btn-primary">Nouvel Achat +</a>
+          </div>
+        </div>
+      </div>
+      <h3 class="my-4">Montant Total des Achats : {{montant}} DA</h3>
+      <form
+        method="get"
+        action="{% url 'searchAchatParFournisseur' %}"
+        class="form-inline"
+      >
+        <label for="fournisseur">Rechercher par fournisseur :</label>
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="fournisseur"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+      <form
+        method="get"
+        action="{% url 'searchAchatParDate' %}"
+        class="form-inline"
+      >
+        <label class="mx-2" for="dateDeb">Date Entre : </label>
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="date"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="dateDeb"
+          />
+          <input
+            class="form-control mr-sm-2"
+            type="date"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="dateFin"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Payement</th>
+            <th scope="col">Date</th>
+            <th scope="col">Fournisseur</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+            <th scope="col">Consulter</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if achats|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for achat in achats %}
+          <tr>
+            <td>{{ achat.CodeAchat }}</td>
+            <td>
+              {% if achat.PayeEntierement %} Entierement {% else %}
+              Partiellement {% endif %}
+            </td>
+            <td>{{ achat.dateAchat }}</td>
+            <td>{{ achat.fournisseur }}</td>
+
+            <td>
+              <a href="" class="btn btn-outline-secondary">Modifier</a>
+            </td>
+            <td>
+              <a
+                href="{% url 'delete achat' achat.CodeAchat %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+            <td>
+              <a
+                href="{% url 'achat details' achat.CodeAchat %}"
+                class="btn btn-outline-primary"
+                >Consulter</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% endblock %}
+  </body>
+</html>
