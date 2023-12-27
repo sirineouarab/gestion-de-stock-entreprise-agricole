@@ -1,14 +1,18 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from django.http import HttpResponse, FileResponse
 from .models import Produit, Client,Fournisseur, Centre,Employe
 from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm
 
+from django.http import FileResponse
 import io 
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
 # Create your views here.
+
+def index(request):
+    return render(request,'index.html')
+
 def tablesManagement(request):
     produits = Produit.objects.all()
     clients = Client.objects.all()
@@ -19,16 +23,16 @@ def tablesManagement(request):
     return render(request, 'magasin/tablesmanagement.html', {'produits': produits,'clients': clients,'fournisseurs':fournisseurs,'centres':centres,'employes':employes})
 
 def achat(request):
-    return HttpResponse('achat page')
+    return render(request, 'magasin/achat.html')
 
 def transfert(request):
-    return HttpResponse('transfert page')
+    return render(request, 'magasin/transfert.html')
 
 def vente(request):
-    return HttpResponse('vente page')
+    return render(request, 'magasin/vente.html')
 
 def stock(request):
-    return HttpResponse('stock page')
+    return render(request, 'magasin/stock.html')
 
 def newProduct(request):
     if request.method == 'POST':

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestion de Stock</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <div>
+      {% load static %} {% block content %}
+
+      <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Gestion De Stock</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="row">
+        <div class="col-sm-11 col-md-4 mx-auto mt-5 px-3">
+          <h1 class="fw-light">Gestion de Stock</h1>
+          <p class="fw-light">
+            Un platform pour gérer la gestion de stock commercial d'une
+            entreprise agricole principale et ses centres
+          </p>
+
+          <div>
+            <a href="{% url 'tablesManagement' %}" class="btn btn-primary"
+              >Main Store</a
+            >
+            <a href="{% url 'tablesManagement' %}" class="btn btn-primary"
+              >Centre 1</a
+            >
+            <a href="{% url 'tablesManagement' %}" class="btn btn-primary"
+              >Centre 2</a
+            >
+            <a href="{% url 'tablesManagement' %}" class="btn btn-primary"
+              >Centre 3</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endblock %}
+  </body>
+</html>
