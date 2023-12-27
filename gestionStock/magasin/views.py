@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat
-from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm
+from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm
 from datetime import datetime
 
 
@@ -65,7 +65,7 @@ def newProduct(request):
         return redirect('tablesManagement')
     else:
         form = ProduitForm() 
-    return render(request,"magasin//tables/addProduct.html",{"form":form})
+    return render(request,"magasin/tables/addProduct.html",{"form":form})
 
 def newClient(request):
     if request.method == 'POST':
@@ -111,6 +111,21 @@ def newEmploye(request):
     else:
         form = EmployeForm() 
     return render(request,"magasin/tables/addEmploye.html",{"form":form})
+
+
+
+def newAchat(request):
+    if request.method == 'POST':
+        form = AchatForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = AchatForm()
+        return redirect('tablesManagement')
+    else:
+        form = AchatForm() 
+    return render(request,"magasin/achat/addAchat.html",{"form":form})
+
+
 
 def deleteProduct(request, id):
     product_delete = get_object_or_404(Produit, CodeP=id)
@@ -234,7 +249,7 @@ def searchProduct(request):
         query=request.GET['search']
         if query:
             produits=Produit.objects.filter(Designation__contains=query)
-            return render(request,'magasin/searchProduct.html', {'produits': produits })
+            return render(request,'magasin/tables/searchProduct.html', {'produits': produits })
     return render(request,'magasin/tables/searchProduct.html')
 
 def searchClient(request):
@@ -242,7 +257,7 @@ def searchClient(request):
         query=request.GET['search']
         if query:
             clients=Client.objects.filter(nomPrenomC__contains=query)
-            return render(request,'magasin/searchClient.html', {'clients': clients })
+            return render(request,'magasin/tables/searchClient.html', {'clients': clients })
     return render(request,'magasin/tables/searchClient.html')
 
 def searchFournisseur(request):
@@ -250,7 +265,7 @@ def searchFournisseur(request):
         query=request.GET['search']
         if query:
             fournisseurs=Fournisseur.objects.filter(nomPrenomF__contains=query)
-            return render(request,'magasin/searchFournisseur.html', {'fournisseurs': fournisseurs })
+            return render(request,'magasin/tables/searchFournisseur.html', {'fournisseurs': fournisseurs })
     return render(request,'magasin/tables/searchFournisseur.html')
 
 
@@ -259,7 +274,7 @@ def searchCentre(request):
         query=request.GET['search']
         if query:
             centres=Centre.objects.filter(DesignationCentre__contains=query)
-            return render(request,'magasin/searchCentre.html', {'centres': centres })
+            return render(request,'magasin/tables/searchCentre.html', {'centres': centres })
     return render(request,'magasin/tables/searchCentre.html')
 
 def searchEmploye(request):
@@ -267,7 +282,7 @@ def searchEmploye(request):
         query=request.GET['search']
         if query:
             employes=Employe.objects.filter(nomPrenomE__contains=query)
-            return render(request,'magasin/searchEmploye.html', {'employes': employes })
+            return render(request,'magasin/tables/searchEmploye.html', {'employes': employes })
     return render(request,'magasin/tables/searchEmploye.html')
 
 def searchAchatParFournisseur(request):
@@ -275,7 +290,7 @@ def searchAchatParFournisseur(request):
         query=request.GET['fournisseur']
         if query:
             achats=Achat.objects.filter(fournisseur__nomPrenomF__contains=query)
-            return render(request,'magasin/searchAchatParFournisseur.html', {'achats': achats })
+            return render(request,'magasin/achat/searchAchatParFournisseur.html', {'achats': achats })
     return render(request,'magasin/achat/searchAchatParFournisseur.html')
 
 def searchAchatParDate(request):
@@ -286,7 +301,7 @@ def searchAchatParDate(request):
             debut_date = datetime.strptime(debut, '%Y-%m-%d')
             fin_date = datetime.strptime(fin, '%Y-%m-%d')
             achats = Achat.objects.filter(dateAchat__range=[debut_date, fin_date])            
-            return render(request,'magasin/searchAchatParDate.html', {'achats': achats })
+            return render(request,'magasin/achat/searchAchatParDate.html', {'achats': achats })
     return render(request,'magasin/achat/searchAchatParDate.html')
 
 

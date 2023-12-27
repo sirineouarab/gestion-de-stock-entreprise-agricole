@@ -18,6 +18,8 @@ urlpatterns = [
     path('newFournisseur/',views.newFournisseur,name='new fournisseur'),
     path('newCentre/',views.newCentre,name='new centre'),
     path('newEmploye/',views.newEmploye,name='new employe'),
+    path('newAchat/',views.newAchat,name='new achat'),
+
 
 
     path('deleteProduct/<int:id>',views.deleteProduct,name='delete product'),

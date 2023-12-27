@@ -68,15 +68,15 @@ class ReglementForm(forms.ModelForm):
 
 
 
-# class AchatForm(forms.ModelForm):
-#     class Meta:
-#         model = Achat, Produit
-#         fields = ['PayeEntierement', 'dateAchat','fournisseur', 'produit','qteAchat','HTAchat']
-#         widgets = {
-#         'PayeEntierement': forms.CheckboxInput(attrs={'class':'form-control'}),
-#         'dateAchat': forms.DateInput(attrs={'class':'form-control'}),
-#         'fournisseur': forms.Select(attrs={'class':'form-control'}),
-#         'produit': forms.Select(attrs={'class':'form-control'}),
-#         'qteAchat': forms.NumberInput(attrs={'class':'form-control'}),
-#         'HTAchat': forms.NumberInput(attrs={'class':'form-control'}),
-#         }
+class AchatForm(forms.ModelForm):
+    class Meta:
+        model = Achat
+        fields = ['PayeEntierement', 'dateAchat','fournisseur']
+        widgets = {
+        # 'PayeEntierement': forms.BooleanField(attrs={'class':'form-control'}),
+        # 'dateAchat': forms.DateInput(attrs={'class':'form-control'}),
+        # 'fournisseur': forms.Select(attrs={'class':'form-control'}),
+        # 'produit': forms.Select(attrs={'class':'form-control'}),
+        # 'qteAchat': forms.NumberInput(attrs={'class':'form-control'}),
+        # 'HTAchat': forms.NumberInput(attrs={'class':'form-control'}),
+        }
