@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat, Transfert
+from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat, Transfert, Vente, ProduitVente
 from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet, TransfertForm
 from datetime import datetime
 
@@ -52,7 +52,20 @@ def transfert(request):
     return render(request, 'magasin/transfert/transfert.html',{"transferts": transferts})
 
 def vente(request):
-    return render(request, 'magasin/vente/vente.html')
+    ventes = Vente.objects.all()
+    montantDesVentes = [
+        {
+            'vente': vente,
+            'montant': sum(
+                produit.qteVente * produit.prixUniVente 
+                for produit in ProduitVente.objects.filter(vente=vente)
+            )
+        }
+        for vente in ventes
+    ]
+    montantDesVentes=sum(item['montant'] for item in montantDesVentes)
+    return render(request, 'magasin/vente/vente.html',{'ventes':ventes,'montant':montantDesVentes})
+
 
 def stock(request):
     return render(request, 'magasin/stock/stock.html')
@@ -113,13 +126,13 @@ def newEmploye(request):
         form = EmployeForm() 
     return render(request,"magasin/tables/addEmploye.html",{"form":form})
 
-
 def newAchat(request):
     if request.method == 'POST':
         form = AchatForm(request.POST)
         formset = ProduitAchatFormSet(request.POST, instance=Achat())
         if form.is_valid() and formset.is_valid():
             achat = form.save()
+            achat.save() 
             formset.instance = achat
             formset.save()
             fournisseur = achat.fournisseur
@@ -132,7 +145,10 @@ def newAchat(request):
     else:
         form = AchatForm()
         formset = ProduitAchatFormSet(instance=Achat())
-    return render(request, 'magasin/achat/addAchat.html', {'form': form, 'formset': formset})
+        fournisseur_form=FournisseurForm()
+    return render(request, 'magasin/achat/addAchat.html', {'form': form,'fournisseur_form':fournisseur_form,'formset': formset})
+
+
 
 def newTransfert(request):
     cost = 0
@@ -153,6 +169,9 @@ def newTransfert(request):
     else:
         form = TransfertForm() 
     return render(request,"magasin/transfert/addTransfert.html",{"form":form,'cout':cost})
+
+def newVente(request):
+    return render(request,"magasin/vente/addVente.html")
 
 def deleteProduct(request, id):
     product_delete = get_object_or_404(Produit, CodeP=id)
@@ -333,6 +352,14 @@ def searchAchatParFournisseur(request):
             return render(request,'magasin/achat/searchAchatParFournisseur.html', {'achats': achats })
     return render(request,'magasin/achat/searchAchatParFournisseur.html')
 
+def searchVenteParClient(request):
+    if request.method == "GET":
+        query=request.GET['client']
+        if query:
+            ventes=Vente.objects.filter(client__nomPrenomC__contains=query)
+            return render(request,'magasin/vente/searchVenteParClient.html', {'ventes': ventes })
+    return render(request,'magasin/vente/searchVenteParClient.html')
+
 def searchAchatParDate(request):
     if request.method == "GET":
         debut=request.GET['dateDeb']
@@ -343,6 +370,17 @@ def searchAchatParDate(request):
             achats = Achat.objects.filter(dateAchat__range=[debut_date, fin_date])            
             return render(request,'magasin/achat/searchAchatParDate.html', {'achats': achats })
     return render(request,'magasin/achat/searchAchatParDate.html')
+
+def searchVenteParDate(request):
+    if request.method == "GET":
+        debut=request.GET['dateDeb']
+        fin=request.GET['dateFin']
+        if debut and fin:            
+            debut_date = datetime.strptime(debut, '%Y-%m-%d')
+            fin_date = datetime.strptime(fin, '%Y-%m-%d')
+            ventes = Vente.objects.filter(dateVente__range=[debut_date, fin_date])            
+            return render(request,'magasin/vente/searchVenteParDate.html', {'ventes': ventes })
+    return render(request,'magasin/vente/searchVenteParDate.html')
 
 def searchTransfert(request):
     if request.method == "GET":

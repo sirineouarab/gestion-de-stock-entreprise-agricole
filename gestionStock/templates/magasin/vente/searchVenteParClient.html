@@ -10,62 +10,15 @@
   </head>
   <body>
     <div class="col-md-10 col-12 mx-auto mt-4">
+      <a href="{% url 'vente' %}" class="btn btn-outline-primary my-3 mx-4">
+        Retourner
+      </a>
       <div class="row">
         <div class="d-flex justify-content-between">
-          <h2>Liste des Ventes</h2>
-          <div>
-            <a href="{% url 'new vente' %}" class="btn btn-primary"
-              >Nouvel Vente +</a
-            >
-          </div>
+          <h2>Resultats :</h2>
         </div>
       </div>
-      <h3 class="my-4">Montant Total des Ventes : {{montant}} DA</h3>
-      <form
-        method="get"
-        action="{% url 'searchVenteParClient' %}"
-        class="form-inline"
-      >
-        <label for="client">Rechercher par client :</label>
-        <div class="d-flex my-3">
-          <input
-            class="form-control mr-sm-2"
-            type="search"
-            placeholder="Rechercher"
-            aria-label="Search"
-            name="client"
-          />
-          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
-            Rechercher
-          </button>
-        </div>
-      </form>
-      <form
-        method="get"
-        action="{% url 'searchVenteParDate' %}"
-        class="form-inline"
-      >
-        <label class="mx-2" for="dateDeb">Date Entre : </label>
-        <div class="d-flex my-3">
-          <input
-            class="form-control mr-sm-2"
-            type="date"
-            placeholder="Rechercher"
-            aria-label="Search"
-            name="dateDeb"
-          />
-          <input
-            class="form-control mr-sm-2"
-            type="date"
-            placeholder="Rechercher"
-            aria-label="Search"
-            name="dateFin"
-          />
-          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
-            Rechercher
-          </button>
-        </div>
-      </form>
+
       <table class="table table-hover table-striped">
         <thead>
           <tr>
@@ -92,11 +45,11 @@
           <tr>
             <td>{{ vente.CodeV }}</td>
             <td>
-              {% if vente.PayeEnt %} Peyement Entierement {% else %} Payement
+              {% if vente.PayeEnt %} Payement Entierement {% else %} Payement
               Partiellement {% endif %}
             </td>
-            <td>{{ vente.dateVente }}</td>
-            <td>{{ vente.client }}</td>
+            <td>{{ vente.datevente }}</td>
+            <td>{{ vente.fournisseur }}</td>
 
             <td>
               <a href="" class="btn btn-outline-secondary">Modifier</a>

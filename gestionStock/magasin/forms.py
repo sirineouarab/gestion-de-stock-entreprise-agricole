@@ -80,13 +80,14 @@ class ReglementForm(forms.ModelForm):
 #         }
 
 class AchatForm(forms.ModelForm):
+
     class Meta:
         model = Achat
         fields = ['PayeEntierement', 'dateAchat', 'fournisseur']
         widgets = {
-            'PayeEntierement': forms.CheckboxInput(attrs={'class':'form-check-input my-2'}),
-            'dateAchat': forms.DateInput(attrs={'class':'form-control my-2', 'type':'date'}),
-            'fournisseur': forms.Select(attrs={'class':'form-control my-2'}),
+            'PayeEntierement': forms.CheckboxInput(attrs={'class': 'form-check-input my-2'}),
+            'dateAchat': forms.DateInput(attrs={'class': 'form-control my-2', 'type': 'date'}),
+            'fournisseur': forms.Select(attrs={'class': 'form-control my-2'}),
         }
 
 

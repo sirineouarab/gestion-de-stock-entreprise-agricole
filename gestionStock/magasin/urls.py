@@ -20,6 +20,8 @@ urlpatterns = [
     path('newEmploye/',views.newEmploye,name='new employe'),
     path('newAchat/',views.newAchat,name='new achat'),
     path('newTransfert/',views.newTransfert,name='new transfert'),
+    path('newVente/',views.newVente,name='new vente'),
+
 
 
 
@@ -52,6 +54,10 @@ urlpatterns = [
     path('searchAchatParFournisseur/',views.searchAchatParFournisseur,name='searchAchatParFournisseur'),
     path('searchAchatParDate/',views.searchAchatParDate,name='searchAchatParDate'),
     path('searchTransfert/',views.searchTransfert,name='search transfert'),
+    path('searchVenteParClient/',views.searchVenteParClient,name='searchVenteParClient'),
+    path('searchVenteParDate/',views.searchVenteParDate,name='searchVenteParDate'),
+
+
 
 
 

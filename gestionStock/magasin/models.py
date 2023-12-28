@@ -21,6 +21,8 @@ class Client(models.Model):
     adresseC = models.CharField(max_length=60)
     telephoneC = models.CharField(max_length=20)
     credit = models.IntegerField(default=0)
+    def __str__(self):
+        return self.nomPrenomC
 
 class Fournisseur(models.Model):
     CodeF = models.AutoField(primary_key=True)
@@ -62,6 +64,7 @@ class Achat(models.Model):
     PayeEntierement = models.BooleanField()
     dateAchat = models.DateField()
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
+
 
 class Reglement(models.Model):
     CodeReg = models.AutoField(primary_key=True)
