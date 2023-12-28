@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% extends 'dash/base.html' %} {% block content %} {% load static %}
+{% extends 'dash/base.html' %}
+{% block content %}
+{% load static %}
 
 <head>
     <meta charset="UTF-8">
@@ -8,9 +10,50 @@
     <title>Achat Analyse</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
 </head>
-<body>
-    <h1>achat</h1>
-</body>
-</html>
 
-{% endblock content %}
+<body>
+
+    <div class="col-md-10 col-12 mx-auto mt-4">
+        <h3 class="my-4">Montant Total des Achats : {{montant}} DA</h3>
+
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Year</th>
+                    <th scope="col">Montant Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in achats %}
+                <tr>
+                    <td>{{ item.year }}</td>
+                    <td>{{ item.montant }} DA</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3 class="my-4">Top 10 Fournisseurs</h3>
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Fournisseur</th>
+            <th scope="col">Montant Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fournisseur in topFournisseurs %}
+        <tr>
+            <td>{{ fournisseur.fournisseur.nomPrenomF }}</td>
+            <td>{{ fournisseur.montant }} DA</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    </div>
+
+    {% endblock %}
+</body>
+
+</html>
