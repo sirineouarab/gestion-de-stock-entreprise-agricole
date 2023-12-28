@@ -32,6 +32,8 @@ urlpatterns = [
     path('deleteCentre/<int:id>',views.deleteCentre,name='delete centre'),
     path('deleteEmploye/<int:id>',views.deleteEmploye,name='delete employe'),
     path('deleteAchat/<int:id>',views.deleteAchat,name='delete achat'),
+    path('deleteVente/<int:id>',views.deleteVente,name='delete vente'),
+
 
 
 

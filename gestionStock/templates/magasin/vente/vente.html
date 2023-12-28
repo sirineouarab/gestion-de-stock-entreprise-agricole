@@ -102,7 +102,11 @@
               <a href="" class="btn btn-outline-secondary">Modifier</a>
             </td>
             <td>
-              <a href="" class="btn btn-danger">Supprimer</a>
+              <a
+                href="{% url 'delete vente' vente.CodeV %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
             </td>
             <td>
               <a href="" class="btn btn-outline-primary">Consulter</a>

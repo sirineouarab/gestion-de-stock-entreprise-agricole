@@ -225,12 +225,27 @@ def deleteAchat(request, id):
     if request.method=='POST': 
         for produit_achat in produits_achat:
             produit = produit_achat.produit
-            produit.qteStock -= produit_achat.qteAchat
+            produit.qteStock += produit_achat.qteAchat
             produit.save()
         Achat_delete.delete()
         return redirect('achat')
     else:
         return render(request,"magasin/achat/deleteAchat.html",{'Achat':Achat_delete} )
+    
+
+def deleteVente(request, id):
+    vente_delete = get_object_or_404(Vente, CodeV=id)
+    produits_vente = ProduitVente.objects.filter(vente=vente_delete)
+
+    if request.method=='POST': 
+        for produit_vente in produits_vente:
+            produit = produit_vente.produit
+            produit.qteStock -= produit_vente.qteVente
+            produit.save()
+        vente_delete.delete()
+        return redirect('vente')
+    else:
+        return render(request,"magasin/vente/deleteVente.html",{'vente':vente_delete} )
    
 
 def editProduct(request, id):
