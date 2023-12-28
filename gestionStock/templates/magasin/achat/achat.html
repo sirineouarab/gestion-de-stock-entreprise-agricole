@@ -99,7 +99,11 @@
             <td>{{ achat.fournisseur }}</td>
 
             <td>
-              <a href="" class="btn btn-outline-secondary">Modifier</a>
+              <a
+                href="{% url 'edit achat' achat.CodeAchat %}"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
             </td>
             <td>
               <a

@@ -37,6 +37,8 @@ urlpatterns = [
     path('editFournisseur/<int:id>',views.editFournisseur,name='edit fournisseur'),
     path('editCentre/<int:id>',views.editCentre,name='edit centre'),
     path('editEmploye/<int:id>',views.editEmploye,name='edit employe'),
+    path('editAchat/<int:id>',views.editAchat,name='edit achat'),
+
 
 
 

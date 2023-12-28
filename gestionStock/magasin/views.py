@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat
-from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm
+from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet
 from datetime import datetime
 
 
@@ -112,18 +112,29 @@ def newEmploye(request):
         form = EmployeForm() 
     return render(request,"magasin/tables/addEmploye.html",{"form":form})
 
-
+from django.shortcuts import render, redirect
+from .forms import AchatForm, ProduitAchatFormSet
+from .models import Achat
 
 def newAchat(request):
     if request.method == 'POST':
         form = AchatForm(request.POST)
-        if form.is_valid():
-            form.save()
-            form = AchatForm()
-        return redirect('tablesManagement')
+        formset = ProduitAchatFormSet(request.POST, instance=Achat())
+        if form.is_valid() and formset.is_valid():
+            achat = form.save()
+            formset.instance = achat
+            formset.save()
+            fournisseur = achat.fournisseur
+            produits = achat.produitachat_set.all()
+            montantTotal = sum(produit.HTAchat * produit.qteAchat for produit in produits)
+            if achat.PayeEntierement is False:
+                fournisseur.solde += montantTotal
+                fournisseur.save()
+            return redirect('achat') 
     else:
-        form = AchatForm() 
-    return render(request,"magasin/achat/addAchat.html",{"form":form})
+        form = AchatForm()
+        formset = ProduitAchatFormSet(instance=Achat())
+    return render(request, 'magasin/achat/addAchat.html', {'form': form, 'formset': formset})
 
 
 
@@ -243,6 +254,19 @@ def editEmploye(request, id):
     else:
         employe_save= EmployeForm(instance=employe_edit)
     return render(request,"magasin/tables/editEmploye.html",{'employe':employe_save})
+
+
+def editAchat(request, id):
+    Achat_edit = get_object_or_404(Achat, CodeAchat=id)
+    if request.method=='POST':
+        Achat_save= AchatForm(request.POST,request.FILES,instance=Achat_edit)
+        if Achat_save.is_valid():
+            Achat_save.save()
+            return redirect('achat')
+    else:
+        Achat_save= AchatForm(instance=Achat_edit)
+        formset = ProduitAchatFormSet(instance=Achat())
+    return render(request,"magasin/achat/editAchat.html",{'Achat':Achat_save,'formset':formset})
 
 def searchProduct(request):
     if request.method == "GET":
