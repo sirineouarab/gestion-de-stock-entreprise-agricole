@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat, Transfert, Vente, ProduitVente
-from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet, TransfertForm
+from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat, Transfert, Vente, ProduitVente, PayementCredit
+from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet, TransfertForm, PayementCreditForm
 from datetime import datetime
 
 
@@ -46,6 +46,16 @@ def achatDetails(request,id):
     montantTotal = sum(produit.HTAchat*produit.qteAchat for produit in produits)
     resteAPayer = montantTotal - sum(reglement.montantReg for reglement in reglements)
     return render(request, 'magasin/achat/achatDetails.html',{'achat':achat,'reglements':reglements,'produits':produits,'montantTotal':montantTotal, 'resteAPayer':resteAPayer})
+
+def venteDetails(request,id):
+    vente = get_object_or_404(Vente, CodeV=id)
+    payementCredits = PayementCredit.objects.filter(vente=id)
+    produits = ProduitVente.objects.filter(vente=id)
+    montantTotal = sum(produit.prixUniVente*produit.qteVente for produit in produits)
+    resteAPayer = montantTotal - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
+    return render(request, 'magasin/vente/venteDetails.html',{'vente':vente,'payementCredits':payementCredits,'produits':produits,'montantTotal':montantTotal, 'resteAPayer':resteAPayer})
+
+
 
 def transfert(request):
     transferts = Transfert.objects.all()
@@ -571,7 +581,7 @@ def completerPayement(request,id):
             reglement.save()
             fournisseur.solde -= reglement.montantReg
             fournisseur.save()
-            if(resteAPayer<=0): 
+            if(resteAPayer==0 or resteAPayer<0): 
                 achat.PayeEntierement = True
                 achat.save()
             form = ReglementForm()
@@ -579,5 +589,34 @@ def completerPayement(request,id):
     else:
         form = ReglementForm() 
     return render(request,"magasin/achat/completerPayement.html",{"form":form})
+
+def PayementCreditSection(request,id):
+    vente = get_object_or_404(Vente, CodeV=id)
+
+    # pour tester s'il a payé completement apr ce paiment
+    payementCredits = PayementCredit.objects.filter(vente=id)
+    produits = ProduitVente.objects.filter(vente=id)
+    montantTotal = sum(produit.prixUniVente*produit.qteVente for produit in produits)
+    resteAPayer = montantTotal - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
+
+    client = vente.client
+
+
+    if request.method == 'POST':
+        form = PayementCreditForm(request.POST)
+        if form.is_valid():
+            payementCredit = form.save(commit=False)
+            payementCredit.vente = vente
+            payementCredit.save()
+            client.credit -= payementCredit.montantPayCredit
+            client.save()
+            if(resteAPayer==0 or resteAPayer<0): 
+                vente.PayeEnt = True
+                vente.save()
+            form = PayementCreditForm()
+        return redirect('vente')
+    else:
+        form = PayementCreditForm() 
+    return render(request,"magasin/vente/completerPayement.html",{"form":form})
 
     

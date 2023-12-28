@@ -1,5 +1,5 @@
 from django import forms
-from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement, ProduitAchat, Transfert
+from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement, ProduitAchat, Transfert, PayementCredit
 from django.forms import inlineformset_factory
 
 class ProduitForm(forms.ModelForm):
@@ -112,4 +112,14 @@ class TransfertForm(forms.ModelForm):
             'centre': forms.Select(attrs={'class':'form-control my-2'}),
             'dateTransfert': forms.DateInput(attrs={'class':'form-control my-2', 'type':'date'}),
             'qteTransfert': forms.NumberInput(attrs={'class':'form-control my-2'}),
+        }
+
+
+class PayementCreditForm(forms.ModelForm):
+    class Meta:
+        model = PayementCredit
+        fields = [ 'datePayCredit', 'montantPayCredit']
+        widgets = {
+        'datePayCredit': forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
+        'montantPayCredit': forms.NumberInput(attrs={'class':'form-control'}),
         }

@@ -9,6 +9,7 @@ urlpatterns = [
     path('achat/',views.achat,name='achat'),
     path('achat/<int:id>',views.achatDetails,name='achat details'),
     path('vente/',views.vente,name='vente'),
+    path('vente/<int:id>',views.venteDetails,name='vente details'),
     path('transfert/',views.transfert,name='transfert'),
     path('stock/',views.stock,name='stock'),
 
@@ -77,6 +78,8 @@ urlpatterns = [
 
 
     path('reglement/<int:id>',views.completerPayement,name='reglement'),
+    path('paiment/<int:id>',views.PayementCreditSection,name='paiement'),
+
 
 
 ]

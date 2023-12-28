@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'magasin/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vente Details</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <a href="{% url 'vente' %}" class="btn btn-outline-primary my-3 mx-4">
+        Retourner
+      </a>
+      <div class="col-sm-11 col-md-4 mx-auto mt-5 px-3">
+        <div class="d-flex justify-content-between">
+          <h1>Information de vente</h1>
+        </div>
+        <p>Code : {{vente.CodeV}}</p>
+
+        {% if vente.PayeEnt %}
+        <p>Paiement Entièrement</p>
+        {% else %}
+        <p>Paiement Partiellement</p>
+        {% endif %}
+        <p>Date : {{vente.dateVente}}</p>
+        <p>Client : {{vente.client}}</p>
+        <p>Montant Total : {{montantTotal}}</p>
+        <h2 class="my-4">Produits vendus :</h2>
+        <ul>
+          {% for produit in produits %}
+          <li>
+            <p>{{ produit.produit.Designation }}</p>
+            <p>Quantité : {{ produit.qteVente }}</p>
+            <p>Prix : {{ produit.prixUniVente }} DA</p>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <h2 class="my-4">Paiement :</h2>
+        <ul>
+          {% for payementCredit in payementCredits %}
+          <li>
+            <p>Date : {{ payementCredit.datePayCredit }}</p>
+            <p>Montant Versé : {{ payementCredit.montantPayCredit }} DA</p>
+          </li>
+          {% endfor %}
+        </ul>
+        {% if not vente.PayeEnt %}
+        <p>Reste à payer : {{resteAPayer}} DA</p>
+        <a
+          href="{% url 'paiement' vente.CodeV %}"
+          class="btn btn-primary my-3 mx-4"
+        >
+          Peyement Credit
+        </a>
+
+        {% endif %}
+      </div>
+    </div>
+
+    {% endblock %}
+  </body>
+</html>

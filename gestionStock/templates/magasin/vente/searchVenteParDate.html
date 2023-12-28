@@ -62,7 +62,11 @@
               >
             </td>
             <td>
-              <a href="" class="btn btn-outline-primary">Consulter</a>
+              <a
+                href="{% url 'vente details' vente.CodeV %}"
+                class="btn btn-outline-primary"
+                >Consulter</a
+              >
             </td>
           </tr>
           {% endfor %}
