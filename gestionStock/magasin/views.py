@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat
-from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet
+from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat, Transfert
+from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet, TransfertForm
 from datetime import datetime
 
 
@@ -48,7 +48,8 @@ def achatDetails(request,id):
     return render(request, 'magasin/achat/achatDetails.html',{'achat':achat,'reglements':reglements,'produits':produits,'montantTotal':montantTotal, 'resteAPayer':resteAPayer})
 
 def transfert(request):
-    return render(request, 'magasin/transfert/transfert.html')
+    transferts = Transfert.objects.all()
+    return render(request, 'magasin/transfert/transfert.html',{"transferts": transferts})
 
 def vente(request):
     return render(request, 'magasin/vente/vente.html')
@@ -112,9 +113,6 @@ def newEmploye(request):
         form = EmployeForm() 
     return render(request,"magasin/tables/addEmploye.html",{"form":form})
 
-from django.shortcuts import render, redirect
-from .forms import AchatForm, ProduitAchatFormSet
-from .models import Achat
 
 def newAchat(request):
     if request.method == 'POST':
@@ -136,7 +134,25 @@ def newAchat(request):
         formset = ProduitAchatFormSet(instance=Achat())
     return render(request, 'magasin/achat/addAchat.html', {'form': form, 'formset': formset})
 
-
+def newTransfert(request):
+    cost = 0
+    if request.method == 'POST':
+        form = TransfertForm(request.POST)
+        if form.is_valid():
+            transfert = form.save(commit=False)
+            quantity = form.cleaned_data['qteTransfert']
+            product = form.cleaned_data['produit']
+            product_price = product.HTProd
+            cost = product_price * quantity
+            transfert.cost = cost
+            transfert.save()
+            form = TransfertForm()
+            product.qteStock -= quantity
+            product.save()
+        return redirect('transfert')
+    else:
+        form = TransfertForm() 
+    return render(request,"magasin/transfert/addTransfert.html",{"form":form,'cout':cost})
 
 def deleteProduct(request, id):
     product_delete = get_object_or_404(Produit, CodeP=id)
@@ -328,6 +344,13 @@ def searchAchatParDate(request):
             return render(request,'magasin/achat/searchAchatParDate.html', {'achats': achats })
     return render(request,'magasin/achat/searchAchatParDate.html')
 
+def searchTransfert(request):
+    if request.method == "GET":
+        query=request.GET['search']
+        if query:
+            transferts=Transfert.objects.filter(produit__Designation__contains=query)
+            return render(request,'magasin/transfert/searchTransfert.html', {'transferts': transferts })
+    return render(request,'magasin/transfert/searchTransfert.html')
 
 def printProducts(request):
     buffer = io.BytesIO()

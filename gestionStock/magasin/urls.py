@@ -19,6 +19,8 @@ urlpatterns = [
     path('newCentre/',views.newCentre,name='new centre'),
     path('newEmploye/',views.newEmploye,name='new employe'),
     path('newAchat/',views.newAchat,name='new achat'),
+    path('newTransfert/',views.newTransfert,name='new transfert'),
+
 
 
 
@@ -49,6 +51,8 @@ urlpatterns = [
     path('searchEmploye/',views.searchEmploye,name='search employe'),
     path('searchAchatParFournisseur/',views.searchAchatParFournisseur,name='searchAchatParFournisseur'),
     path('searchAchatParDate/',views.searchAchatParDate,name='searchAchatParDate'),
+    path('searchTransfert/',views.searchTransfert,name='search transfert'),
+
 
 
 

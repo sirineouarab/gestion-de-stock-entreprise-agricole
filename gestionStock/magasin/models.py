@@ -80,4 +80,5 @@ class Transfert(models.Model):
     centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
     dateTransfert = models.DateField()
     qteTransfert = models.IntegerField()
+    cost = models.IntegerField(default=0)
 
