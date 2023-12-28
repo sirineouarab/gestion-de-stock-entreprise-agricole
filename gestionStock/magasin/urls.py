@@ -22,6 +22,8 @@ urlpatterns = [
     path('newAchat/',views.newAchat,name='new achat'),
     path('newTransfert/',views.newTransfert,name='new transfert'),
     path('newVente/',views.newVente,name='new vente'),
+    path('newProductStock/',views.newProductStock,name='new product stock'),
+
 
 
 
@@ -34,6 +36,8 @@ urlpatterns = [
     path('deleteEmploye/<int:id>',views.deleteEmploye,name='delete employe'),
     path('deleteAchat/<int:id>',views.deleteAchat,name='delete achat'),
     path('deleteVente/<int:id>',views.deleteVente,name='delete vente'),
+    path('deleteProductStock/<int:id>',views.deleteProductStock,name='delete product stock'),
+
 
 
 
@@ -45,6 +49,8 @@ urlpatterns = [
     path('editCentre/<int:id>',views.editCentre,name='edit centre'),
     path('editEmploye/<int:id>',views.editEmploye,name='edit employe'),
     path('editAchat/<int:id>',views.editAchat,name='edit achat'),
+    path('editProductStock/<int:id>',views.editProductStock,name='edit product stock'),
+
 
 
 
@@ -59,6 +65,10 @@ urlpatterns = [
     path('searchTransfert/',views.searchTransfert,name='search transfert'),
     path('searchVenteParClient/',views.searchVenteParClient,name='searchVenteParClient'),
     path('searchVenteParDate/',views.searchVenteParDate,name='searchVenteParDate'),
+    path('searchProduitParNom/',views.searchProduitParNom,name='searchProduitParNom'),
+    path('searchProduitParFournisseur/',views.searchProduitParFournisseur,name='searchProduitParFournisseur'),
+    path('searchProduitParDate/',views.searchProduitParDate,name='searchProduitParDate'),
+
 
 
 
@@ -68,6 +78,10 @@ urlpatterns = [
 
 
     path('printProducts/',views.printProducts,name='print products'),
+    path('printProductsStock/',views.printProductsStock,name='print products stock'),
+    path('printProductsStockDate/<str:debut_date>/<str:fin_date>',views.printProductsStockDate,name='print products stock date'),
+    path('printProductsStockFournisseur/<str:query>',views.printProductsStockFournisseur,name='print products stock fournisseur'),
+    path('printProductsStockNom/<str:query>',views.printProductsStockNom,name='print products stock nom'),
     path('printClients/',views.printClients,name='print clients'),
     path('printFournisseurs/',views.printFournisseurs,name='print fournisseurs'),
     path('printCentres/',views.printCentres,name='print centres'),

@@ -9,8 +9,137 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
   </head>
   <body>
-    <h1>stock</h1>
+<!-- Produits -->
+<div class="col-md-10 col-12 mx-auto mt-4">
+  <div class="row">
+    <div class="d-flex justify-content-between">
+      <h2>Liste des Produits en stock :</h2>
+      
 
+
+      <div>
+        <a href="{% url 'print products stock' %}" class="btn btn-info"
+          >Imprimer l'état de stock</a
+        >
+        <a href="{% url 'new product stock' %}" class="btn btn-primary"
+          >Nouveau Produit +</a
+        >
+      </div>
+    </div>
+  </div>
+  <h2>Total Achat : {{totalAchat}} DA</h2>
+  <form
+        method="get"
+        action="{% url 'searchProduitParNom' %}"
+        class="form-inline"
+      >
+        <label for="nom">Rechercher par nom :</label>
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="nom"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+  <form
+        method="get"
+        action="{% url 'searchProduitParFournisseur' %}"
+        class="form-inline"
+      >
+        <label for="fournisseur">Rechercher par fournisseur :</label>
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="fournisseur"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+      <form
+        method="get"
+        action="{% url 'searchProduitParDate' %}"
+        class="form-inline"
+      >
+        <label class="mx-2" for="dateDeb">Date Entre : </label>
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="date"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="dateDeb"
+          />
+          <input
+            class="form-control mr-sm-2"
+            type="date"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="dateFin"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Code</th>
+        <th scope="col">Désignation</th>
+        <th scope="col">Quantité en Stock</th>
+        <th scope="col">Prix HT</th>
+        <th scope="col">Modifier</th>
+        <th scope="col">Supprimer</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if produits|length == 0 %}
+      <tr>
+        <th scope="row">-</th>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      {% endif %} {% for produit in produits %}
+      <tr>
+        <td>{{ produit.CodeP }}</td>
+        <td>{{ produit.Designation }}</td>
+        <td>{{ produit.qteStock }}</td>
+        <td>{{ produit.HTProd }}</td>
+
+        <td>
+          <a
+            href="{% url 'edit product stock' produit.CodeP %}"
+            class="btn btn-outline-secondary"
+            >Modifier</a
+          >
+        </td>
+        <td>
+          <a
+            href="{% url 'delete product stock' produit.CodeP %}"
+            class="btn btn-danger"
+            >Supprimer</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
     {% endblock %}
   </body>
 </html>

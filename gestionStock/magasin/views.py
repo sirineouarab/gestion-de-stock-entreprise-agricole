@@ -78,7 +78,9 @@ def vente(request):
 
 
 def stock(request):
-    return render(request, 'magasin/stock/stock.html')
+    produits = Produit.objects.filter(qteStock__gt=0)
+    totalAchat = sum(produit.qteStock * produit.HTProd for produit in produits)
+    return render(request, 'magasin/stock/stock.html',{'produits':produits,'totalAchat':totalAchat})
 
 def newProduct(request):
     if request.method == 'POST':
@@ -90,6 +92,18 @@ def newProduct(request):
     else:
         form = ProduitForm() 
     return render(request,"magasin/tables/addProduct.html",{"form":form})
+
+
+def newProductStock(request):
+    if request.method == 'POST':
+        form = ProduitForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = ProduitForm()
+        return redirect('stock')
+    else:
+        form = ProduitForm() 
+    return render(request,"magasin/stock/addProduct.html",{"form":form})
 
 def newClient(request):
     if request.method == 'POST':
@@ -191,6 +205,14 @@ def deleteProduct(request, id):
     else:
         return render(request,"magasin/tables/deleteProduct.html",{'produit': product_delete} )
     
+def deleteProductStock(request, id):
+    product_delete = get_object_or_404(Produit, CodeP=id)
+    if request.method=='POST': 
+        product_delete.delete()
+        return redirect('stock')
+    else:
+        return render(request,"magasin/stock/deleteProduct.html",{'produit': product_delete} )
+    
 
 def deleteClient(request, id):
     client_delete = get_object_or_404(Client, CodeC=id)
@@ -268,6 +290,19 @@ def editProduct(request, id):
     else:
         product_save= ProduitForm(instance=product_edit)
     return render(request,"magasin/tables/editProduct.html",{'produit':product_save})
+
+
+
+def editProductStock(request, id):
+    product_edit = get_object_or_404(Produit, CodeP=id)
+    if request.method=='POST':
+        product_save= ProduitForm(request.POST,request.FILES,instance=product_edit)
+        if product_save.is_valid():
+            product_save.save()
+            return redirect('stock')
+    else:
+        product_save= ProduitForm(instance=product_edit)
+    return render(request,"magasin/stock/editProduct.html",{'produit':product_save})
 
 
 def editClient(request, id):
@@ -407,6 +442,39 @@ def searchVenteParDate(request):
             return render(request,'magasin/vente/searchVenteParDate.html', {'ventes': ventes })
     return render(request,'magasin/vente/searchVenteParDate.html')
 
+def searchProduitParNom(request):
+    if request.method == "GET":
+        query=request.GET['nom']
+        if query:
+            produits = Produit.objects.filter(Designation__contains=query)
+            totalAchat = sum(produit.qteStock * produit.HTProd for produit in produits)
+            return render(request,'magasin/stock/searchStockParNomProduit.html', {'produits': produits ,'totalAchat':totalAchat,'query':query})
+    return render(request,'magasin/stock/searchStockParNomProduit.html')
+
+def searchProduitParFournisseur(request):
+    if request.method == "GET":
+        query=request.GET['fournisseur']
+        if query:
+            produits = Produit.objects.filter(produitachat__achat__fournisseur__nomPrenomF__contains=query)
+            totalAchat = sum(produit.qteStock * produit.HTProd for produit in produits)
+            return render(request,'magasin/stock/searchStockParFournisseur.html', {'produits': produits,'totalAchat':totalAchat,'query':query })
+    return render(request,'magasin/stock/searchStockParFournisseur.html')
+
+def searchProduitParDate(request):
+    debut_date= None
+    fin_date= None
+    if request.method == "GET":
+        debut=request.GET['dateDeb']
+        fin=request.GET['dateFin']
+        if debut and fin:            
+            debut_date = datetime.strptime(debut, '%Y-%m-%d')
+            fin_date = datetime.strptime(fin, '%Y-%m-%d')
+            produits = Produit.objects.filter(produitachat__achat__dateAchat__range=(debut_date, fin_date))
+            totalAchat = sum(produit.qteStock * produit.HTProd for produit in produits)
+            return render(request,'magasin/stock/searchStockParDate.html', {'produits': produits ,'totalAchat':totalAchat,'debut_date': debut_date, 'fin_date': fin_date})
+    return render(request,'magasin/stock/searchStockParDate.html')
+
+
 def searchTransfert(request):
     if request.method == "GET":
         query=request.GET['search']
@@ -442,6 +510,127 @@ def printProducts(request):
     p.save()
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename="produits.pdf")
+
+
+def printProductsStock(request):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter,bottomup=0)
+    textob = p.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica",14)
+
+    produits = Produit.objects.filter(qteStock__gt=0)
+
+    lines = []
+
+    for produit in produits:
+        lines.append("code produit : "+str(produit.CodeP))
+        lines.append("designation produit : "+str(produit.Designation))
+        lines.append("quantité en stock : "+str(produit.qteStock))
+        lines.append("HT produit : "+str(produit.HTProd))
+        lines.append("==============================")
+ 
+    
+    for line in lines:
+        textob.textLine(line)
+    
+    p.drawText(textob)
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="produitsEnStock.pdf")
+
+
+
+def printProductsStockDate(request,debut_date,fin_date):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter,bottomup=0)
+    textob = p.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica",14)
+
+    produits = Produit.objects.filter(produitachat__achat__dateAchat__range=(debut_date, fin_date))
+
+    lines = []
+
+    for produit in produits:
+        lines.append("code produit : "+str(produit.CodeP))
+        lines.append("designation produit : "+str(produit.Designation))
+        lines.append("quantité en stock : "+str(produit.qteStock))
+        lines.append("HT produit : "+str(produit.HTProd))
+        lines.append("==============================")
+ 
+    
+    for line in lines:
+        textob.textLine(line)
+    
+    p.drawText(textob)
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="produitsEnStock.pdf")
+
+def printProductsStockFournisseur(request,query):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter,bottomup=0)
+    textob = p.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica",14)
+
+    produits = Produit.objects.filter(produitachat__achat__fournisseur__nomPrenomF__contains=query)
+
+    lines = []
+
+    for produit in produits:
+        lines.append("code produit : "+str(produit.CodeP))
+        lines.append("designation produit : "+str(produit.Designation))
+        lines.append("quantité en stock : "+str(produit.qteStock))
+        lines.append("HT produit : "+str(produit.HTProd))
+        lines.append("==============================")
+ 
+    
+    for line in lines:
+        textob.textLine(line)
+    
+    p.drawText(textob)
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="produitsEnStock.pdf")
+
+def printProductsStockNom(request,query):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter,bottomup=0)
+    textob = p.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica",14)
+
+    produits = Produit.objects.filter(Designation__contains=query)
+
+    lines = []
+
+    for produit in produits:
+        lines.append("code produit : "+str(produit.CodeP))
+        lines.append("designation produit : "+str(produit.Designation))
+        lines.append("quantité en stock : "+str(produit.qteStock))
+        lines.append("HT produit : "+str(produit.HTProd))
+        lines.append("==============================")
+ 
+    
+    for line in lines:
+        textob.textLine(line)
+    
+    p.drawText(textob)
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename="produitsEnStock.pdf")
+
+
 
 def printClients(request):
     buffer = io.BytesIO()
