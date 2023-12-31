@@ -1,10 +1,19 @@
 from django.http import HttpResponseBadRequest
-
+from django.views.generic import TemplateView,View
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
 from .models import Produit,Vente
 from .forms import SaleForm
 import datetime
+
+def afficher_ventes(request):
+    ventes=Vente.objects.all()
+    return render(request,'centre/afficher_ventes.html',{'ventes':ventes})
+
+class Dashboard(View):
+    def get(self,request):
+        return render(request,'centre/dashboard.html')
+
 
 
 def update_stock_after_sale(vente_id):
