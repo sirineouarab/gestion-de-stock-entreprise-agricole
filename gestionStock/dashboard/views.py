@@ -25,7 +25,7 @@ def achat(request):
     ]
     
     # Sort fournisseurs by montant in descending order
-    topFournisseurs = sorted(montantDesFournisseurs, key=lambda x: x['montant'], reverse=True)[:10]  # top 10
+    topFournisseurs = sorted(montantDesFournisseurs, key=lambda x: x['montant'], reverse=True)[:5]  # top 5
     
     # Grouping achats by year
     grouped_achats = {
