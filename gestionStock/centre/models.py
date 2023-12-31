@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 
 class Centre(models.Model):
     CodeCentre = models.AutoField(primary_key=True)
@@ -20,14 +21,20 @@ class Client(models.Model):
     adresseC = models.CharField(max_length=60)
     telephoneC = models.CharField(max_length=20)
     credit = models.IntegerField()
+    def __str__(self):
+        return self.nomPrenomC
+
+
+
 
 class Produit(models.Model):
-    CodeP = models.AutoField(primary_key=True)
+    produit = models.AutoField(primary_key=True)
     Designation = models.CharField(max_length=40)
     qteStock = models.PositiveIntegerField()
-    HTProd = models.IntegerField()# Create your models here.
-# centre1/models.py
-    
+    HTProd = models.DecimalField(max_digits=10, decimal_places=2)# Create your models here.
+    def __str__(self):
+        return self.Designation
+
 
 
 
@@ -45,17 +52,27 @@ def validate_date_format(value):
 class Vente(models.Model):
     CodeV = models.AutoField(primary_key=True)
     date =models.DateField()
-    PayeEnt = models.BooleanField()
+    PayeEnt = models.BooleanField(null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     qteVente = models.IntegerField(default=0)
-    prixUniVente = models.IntegerField(default=0)
+    prixUniVente = models.IntegerField(default=0,validators=[MinValueValidator(0)])
     prix_total=models.IntegerField(default=0)
- 
- 
+    
+
+
 class CreditPayment(models.Model):
     CodePayCredit = models.AutoField(primary_key=True)
     date = models.DateField()
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
+
+
+
+
+class Reglement(models.Model):
+    CodeReg = models.AutoField(primary_key=True)
+    montantReg = models.IntegerField()
+    dateReg = models.DateField()
+    vente = models.ForeignKey(Vente, on_delete=models.CASCADE)    

@@ -6,9 +6,9 @@ from datetime import datetime
 
 from django.http import FileResponse
 import io 
-from reportlab.pdfgen import canvas
-from reportlab.lib.units import inch
-from reportlab.lib.pagesizes import letter
+##from reportlab.pdfgen import canvas
+##from reportlab.lib.units import inch
+##from reportlab.lib.pagesizes import letter
 
 # Create your views here.
 
