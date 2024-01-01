@@ -1,0 +1,87 @@
+<head>
+    <!-- Add this to your <head> section -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="">Gestion De Centre</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+       
+        <a href="#" class="text-decoration-none text-dark"
+          ><li class="m-3">Gestion Employees</li></a
+        >
+        <a href="#" class="text-decoration-none text-dark"
+          ><li class="m-3">Vente</li></a
+        >
+        <a href="#" class="text-decoration-none text-dark"
+          ><li class="m-3">Stock</li></a
+        >
+      </ul>
+    </div>
+  </div>
+</nav>
+{% block title %}Top Customer Chart{% endblock %}
+
+{% block content %}
+    <canvas id="topCustomerChart" width="400" height="300"></canvas>
+
+    <script>
+        var ctx = document.getElementById('topCustomerChart').getContext('2d');
+        fetch('/centre/api/top-customer-chart/')
+            .then(response => response.json())
+            .then(data => {
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(entry => entry.customer),
+                        datasets: [{
+                            label: 'Total Purchases',
+                            data: data.map(entry => entry.total_purchases),
+                            backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(250, 99, 132, 0.2)',
+                            'rgba(70, 102, 192, 0.3)',
+                            'rgba(73, 103, 192, 0.4)',
+                            'rgba(255, 99, 132, 0.2)',
+                                            
+                                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(250, 99, 132, 1)',
+                                'rgba(70, 102, 192, 1)',
+                                'rgba(73, 103, 192, 1)',
+                                'rgba(255, 99, 132, 1)',
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+{% endblock %}

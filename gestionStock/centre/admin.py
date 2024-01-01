@@ -9,9 +9,11 @@ from .models import Vente
 from .models import CreditPayment
 
 
+
 admin.site.register(Produit)
 admin.site.register(Centre)
 admin.site.register(Client)
 admin.site.register(Employe)
 admin.site.register(Vente)
+
 admin.site.register(CreditPayment)

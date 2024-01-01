@@ -7,7 +7,6 @@ class SaleForm(forms.ModelForm):
    date = forms.CharField()
    class Meta:
         model = Vente
-        fields="__all__"
-
-
+        fields = ['date', 'client', 'produit', 'qteVente','prixUniVente']
+   prix_total = forms.IntegerField(disabled=True, required=False)
 # forms.py
