@@ -33,8 +33,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'magasin.apps.MagasinConfig',
-    'centre.apps.CentreConfig',
     'dashboard.apps.DashboardConfig',
+    'centre.apps.CentreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
