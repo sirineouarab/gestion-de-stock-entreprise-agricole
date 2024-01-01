@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
+from django.db.models import Sum
 
 class Centre(models.Model):
     CodeCentre = models.AutoField(primary_key=True)
@@ -58,7 +59,8 @@ class Vente(models.Model):
     qteVente = models.IntegerField(default=0)
     prixUniVente = models.IntegerField(default=0,validators=[MinValueValidator(0)])
     prix_total=models.IntegerField(default=0)
-    
+    def montant_total_ventes(self):
+        return Vente.objects.aggregate(Sum('prix_total'))['prix_total__sum'] or 0
 
 
 class CreditPayment(models.Model):
@@ -68,11 +70,3 @@ class CreditPayment(models.Model):
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
 
-
-
-
-class Reglement(models.Model):
-    CodeReg = models.AutoField(primary_key=True)
-    montantReg = models.IntegerField()
-    dateReg = models.DateField()
-    vente = models.ForeignKey(Vente, on_delete=models.CASCADE)    
