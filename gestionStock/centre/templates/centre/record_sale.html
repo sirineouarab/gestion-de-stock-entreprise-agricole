@@ -16,9 +16,7 @@
         <h1>Nouvelle Vente</h1>
 
         <form method="POST" enctype="multipart/form-data">
-          <div class="card-body">{% csrf_token %}  
-           <!-- {{ form.as_p }} -->
-           <label> Produit : </label>
+          <div class="card-body">{% csrf_token %}<label> Produit : </label>
            
            
               {{ form.produit}}
@@ -26,7 +24,7 @@
               <br />
               <br/>
               <label>Date : </label>
-              {{ form.date}}
+              <input type="date" name="date" id="date">
               <br/>
               <br/>
               <label>Client : </label>
@@ -43,7 +41,7 @@
               <br />
               <br/>
          
-        <!-- </div>
+         </div><!--
           <div class="card-body">{% csrf_token %}  
             <!-/- {{ form.as_p }} --/>
             {{ form.date.label_tag }}

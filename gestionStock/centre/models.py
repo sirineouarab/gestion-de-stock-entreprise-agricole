@@ -48,22 +48,10 @@ class Produit(models.Model):
     produit = models.AutoField(primary_key=True)
     Designation = models.CharField(max_length=40)
     qteStock = models.PositiveIntegerField()
-    HTProd = models.DecimalField(max_digits=10, decimal_places=2)# Create your models here.
+    HTProd = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
         return self.Designation
 
-
-
-
-
-
-
-def validate_date_format(value):
-    try:
-        # Essayez de convertir la chaîne en objet date pour valider le format
-        datetime.datetime.strptime(value, '%d/%m/%y')
-    except ValueError:
-        raise ValidationError('Format de date invalide. Utilisez dd/mm/yy.')
 
 
 class Vente(models.Model):

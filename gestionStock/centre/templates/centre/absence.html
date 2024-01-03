@@ -21,15 +21,13 @@
     <div class="col-11 col-md-4 mx-auto mt-5">
       <h2>Nouvelle Absence</h2>
 
-<form method="post" action="{% url 'absence' %}">
+<form method="post" enctype="multipart/form-data">
     <div class="card-body">
     {% csrf_token %}
     <label for="emp_id">Employé:</label>
-    <select name="emp_id" id="emp_id">
-        {% for employe in employes %}
-            <option value="{{ employe.CodeE }}">{{ employe.nomPrenomE }}</option>
-        {% endfor %}
-    </select>
+    
+        {{form.emp}}
+   
     <br />
     <br/>
     <div  style="display: block" class="mb-3">
