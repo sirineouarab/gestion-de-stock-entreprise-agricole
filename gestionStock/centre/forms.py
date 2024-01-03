@@ -1,7 +1,7 @@
 from django import forms
 # centre1/forms.py
 
-from .models import Vente
+from .models import Vente,Absence
 
 class SaleForm(forms.ModelForm):
    date = forms.CharField()
@@ -10,3 +10,10 @@ class SaleForm(forms.ModelForm):
         fields = ['date', 'client', 'produit', 'qteVente','prixUniVente']
    prix_total = forms.IntegerField(disabled=True, required=False)
 # forms.py
+class AbsenceForm(forms.ModelForm):
+    class Meta:
+        model = Absence
+        fields = ['emp', 'dateAbsence']
+        widgets = {
+            'dateAbsence': forms.DateInput(attrs={'type': 'date'}),
+        }

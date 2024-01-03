@@ -3,6 +3,7 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import Sum
+from magasin.models import Transfert
 
 class Centre(models.Model):
     CodeCentre = models.AutoField(primary_key=True)
@@ -15,7 +16,22 @@ class Employe(models.Model):
     telephoneE = models.CharField(max_length=20)
     salaireJour = models.IntegerField()
     centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.nomPrenomE
 
+
+class Absence(models.Model):
+    codeA=models.AutoField(primary_key=True)
+    emp=models.ForeignKey(Employe,on_delete=models.CASCADE)
+    dateAbsence = models.DateField()
+  
+class Avance(models.Model):
+    codeA=models.AutoField(primary_key=True)
+    montantAvance=models.DecimalField(max_digits=15, decimal_places=2)
+    dateAvance=models.DateField()
+    employe=models.ForeignKey(Employe,on_delete=models.CASCADE)
+
+    
 class Client(models.Model):
     CodeC = models.AutoField(primary_key=True)
     nomPrenomC = models.CharField(max_length=60)
@@ -69,4 +85,6 @@ class CreditPayment(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
+    
+
 

@@ -1,0 +1,62 @@
+{% extends 'centre/base.html' %}
+{% block content %}
+{% load static %}
+
+<head> 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
+<!-- Partie 1 - Overview -->
+<div class="overview">
+    <div class="section">
+        <h4>Nombre total des employés: {{ total_employees }}</h4>
+    </div>
+    <div class="section">
+        <h4>Pourcentage d'absence aujourd'hui: {{ present_percentage }}%</h4>
+    </div>
+    <div class="section">
+        <h4>Nombre total des employees absencent aujourd'hui: {{ total_absences }}</h4>
+    </div>
+</div>
+
+<!-- Partie 2 - Chart d'absence pour l'année -->
+<div class="chart">
+    <!-- Utilisez un script pour générer le graphique avec JavaScript et Chart.js -->
+    <canvas id="absenceChart" width="80" height="30"></canvas>
+</div>
+
+<script>
+    // Script pour générer le graphique d'absence pour l'année
+    var ctx = document.getElementById('absenceChart').getContext('2d');
+
+    // Utilisez AJAX pour récupérer les données depuis l'API REST
+    fetch('/centre/api/absence-chart/')
+        .then(response => response.json())
+        .then(data => {
+            var labels = data.map(entry => entry.emp__nomPrenomE);
+            var values = data.map(entry => entry.total_absences);
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nombre d\'absences',
+                        data: values,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+</script>
+{% endblock content %}
