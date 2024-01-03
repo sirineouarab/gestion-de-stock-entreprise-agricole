@@ -31,6 +31,8 @@ def update_stock_after_sale(vente_id):
         return HttpResponseBadRequest("Quantité de produit insuffisante en stock.")
 
 def record_sale(request):
+    template_name = 'centre/record_sale.html'
+
     if request.method == 'POST':
         form = SaleForm(request.POST)
         if form.is_valid():
@@ -41,9 +43,8 @@ def record_sale(request):
             # Appeler la fonction pour mettre à jour le stock
             update_stock_after_sale(sale.pk)
 
-            return render(request, 'centre/record_sale.html', {'form': form, 'prix_total': sale.prix_total})
-    else:
-        form = SaleForm()
+            return redirect('afficher_vente')
+    form = SaleForm()
 
     return render(request, 'centre/record_sale.html', {'form': form})
 
@@ -53,8 +54,8 @@ def vente(request):
   vente_instance = Vente()
     # Calculer le montant total des ventes
   montant_total_ventes = vente_instance.montant_total_ventes()
-
   return render(request, 'centre/afficher_ventes.html', {'montant_total_ventes': montant_total_ventes})
+
 #charts Vente et Client
 def chart_view(request):
     return render(request, 'centre/dashboard.html')
@@ -109,10 +110,13 @@ class EmployeManagementView(View):
     
 
 def absence_create(request):
+    template_name = 'centre/absence.html'
+
     if request.method == 'POST':
         form = AbsenceForm(request.POST)
         if form.is_valid():
-            form.save()
+            absence=form.save(commit=False)
+            absence.save()
             return redirect('employe-management')  # Redirige vers la liste des absences
     else:
         form = AbsenceForm()

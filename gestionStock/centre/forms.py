@@ -8,6 +8,9 @@ class SaleForm(forms.ModelForm):
    class Meta:
         model = Vente
         fields = ['date', 'client', 'produit', 'qteVente','prixUniVente']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
    prix_total = forms.IntegerField(disabled=True, required=False)
 # forms.py
 class AbsenceForm(forms.ModelForm):
