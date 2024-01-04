@@ -37,7 +37,7 @@ class Produit(models.Model):
     CodeP = models.AutoField(primary_key=True)
     Designation = models.CharField(max_length=40)
     qteStock = models.IntegerField(default=0)
-    HTProd = models.IntegerField()
+    HTProd = models.IntegerField(default=0)
     def __str__(self):
         return self.Designation
 
@@ -46,6 +46,9 @@ class Vente(models.Model):
     PayeEnt = models.BooleanField()
     dateVente = models.DateField()
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE,default=None)
+    qteVente = models.IntegerField(default=0)
+    prixUniVente = models.IntegerField(default=0)
 
 class PayementCredit(models.Model):
     CodePayCredit = models.AutoField(primary_key=True)
@@ -53,32 +56,24 @@ class PayementCredit(models.Model):
     datePayCredit = models.DateField()
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
 
-class ProduitVente(models.Model):
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
-    vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
-    qteVente = models.IntegerField()
-    prixUniVente = models.IntegerField()
-
 class Achat(models.Model):
     CodeAchat = models.AutoField(primary_key=True)
     PayeEntierement = models.BooleanField()
     dateAchat = models.DateField()
     fournisseur = models.ForeignKey(Fournisseur, on_delete=models.CASCADE)
+    produit = models.ForeignKey(Produit, on_delete=models.CASCADE, default=None)    
+    qteAchat = models.IntegerField(default=0)
+    HTAchat = models.IntegerField(default=0)
 
 
 class Reglement(models.Model):
     CodeReg = models.AutoField(primary_key=True)
     montantReg = models.IntegerField()
     dateReg = models.DateField()
-    achat = models.ForeignKey(Achat, on_delete=models.CASCADE)
-
-class ProduitAchat(models.Model):
-    produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
-    achat = models.ForeignKey(Achat, on_delete=models.CASCADE)
-    qteAchat = models.IntegerField()
-    HTAchat = models.IntegerField()
+    achat = models.ForeignKey(Achat, on_delete=models.CASCADE)    
 
 class Transfert(models.Model):
+    CodeTransfert = models.AutoField(primary_key=True,default=None)    
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
     dateTransfert = models.DateField()

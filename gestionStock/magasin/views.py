@@ -1,14 +1,14 @@
 from django.shortcuts import render,redirect, get_object_or_404
-from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement,ProduitAchat, Transfert, Vente, ProduitVente, PayementCredit
-from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, AchatForm, ProduitAchatFormSet, TransfertForm, PayementCreditForm
+from .models import Produit, Client,Fournisseur, Centre,Employe, Achat,Reglement, Transfert, Vente, PayementCredit
+from .forms import ProduitForm,ClientForm, FournisseurForm, CentreForm, EmployeForm,ReglementForm, TransfertForm, PayementCreditForm, VenteForm, AchatForm
 from datetime import datetime
 
 
 from django.http import FileResponse
 import io 
-##from reportlab.pdfgen import canvas
-##from reportlab.lib.units import inch
-##from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
 
 # Create your views here.
 
@@ -29,53 +29,44 @@ def achat(request):
     montantDesAchats = [
         {
             'achat': achat,
-            'montant': sum(
-                produit.qteAchat * produit.HTAchat 
-                for produit in ProduitAchat.objects.filter(achat=achat)
-            )
+            'montant': achat.qteAchat * achat.HTAchat
         }
         for achat in achats
     ]
     montantDesAchats=sum(item['montant'] for item in montantDesAchats)
     return render(request, 'magasin/achat/achat.html',{'achats':achats,'montant':montantDesAchats})
 
-def achatDetails(request,id):
+def achatDetails(request, id):
     achat = get_object_or_404(Achat, CodeAchat=id)
     reglements = Reglement.objects.filter(achat=id)
-    produits = ProduitAchat.objects.filter(achat=id)
-    montantTotal = sum(produit.HTAchat*produit.qteAchat for produit in produits)
+    montantTotal = achat.qteAchat * achat.HTAchat
     resteAPayer = montantTotal - sum(reglement.montantReg for reglement in reglements)
-    return render(request, 'magasin/achat/achatDetails.html',{'achat':achat,'reglements':reglements,'produits':produits,'montantTotal':montantTotal, 'resteAPayer':resteAPayer})
+
+    return render(request, 'magasin/achat/achatDetails.html', {
+        'achat': achat,
+        'reglements': reglements,
+        'montantTotal': montantTotal,
+        'resteAPayer': resteAPayer
+    })
+
 
 def venteDetails(request,id):
     vente = get_object_or_404(Vente, CodeV=id)
     payementCredits = PayementCredit.objects.filter(vente=id)
-    produits = ProduitVente.objects.filter(vente=id)
-    montantTotal = sum(produit.prixUniVente*produit.qteVente for produit in produits)
+    montantTotal = vente.qteVente * vente.prixUniVente
     resteAPayer = montantTotal - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
-    return render(request, 'magasin/vente/venteDetails.html',{'vente':vente,'payementCredits':payementCredits,'produits':produits,'montantTotal':montantTotal, 'resteAPayer':resteAPayer})
+    return render(request, 'magasin/vente/venteDetails.html',{'vente':vente,'payementCredits':payementCredits,'montantTotal':montantTotal, 'resteAPayer':resteAPayer})
 
 
 
 def transfert(request):
     transferts = Transfert.objects.all()
     return render(request, 'magasin/transfert/transfert.html',{"transferts": transferts})
-
 def vente(request):
     ventes = Vente.objects.all()
-    montantDesVentes = [
-        {
-            'vente': vente,
-            'montant': sum(
-                produit.qteVente * produit.prixUniVente 
-                for produit in ProduitVente.objects.filter(vente=vente)
-            )
-        }
-        for vente in ventes
-    ]
-    montantDesVentes=sum(item['montant'] for item in montantDesVentes)
-    return render(request, 'magasin/vente/vente.html',{'ventes':ventes,'montant':montantDesVentes})
-
+    montantDesVentes = sum(vente.qteVente * vente.prixUniVente for vente in ventes)
+    
+    return render(request, 'magasin/vente/vente.html', {'ventes': ventes, 'montant': montantDesVentes})
 
 def stock(request):
     produits = Produit.objects.filter(qteStock__gt=0)
@@ -150,52 +141,83 @@ def newEmploye(request):
         form = EmployeForm() 
     return render(request,"magasin/tables/addEmploye.html",{"form":form})
 
+
 def newAchat(request):
     if request.method == 'POST':
         form = AchatForm(request.POST)
-        formset = ProduitAchatFormSet(request.POST, instance=Achat())
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             achat = form.save()
-            achat.save() 
-            formset.instance = achat
-            formset.save()
-            fournisseur = achat.fournisseur
-            produits = achat.produitachat_set.all()
-            montantTotal = sum(produit.HTAchat * produit.qteAchat for produit in produits)
-            if achat.PayeEntierement is False:
-                fournisseur.solde += montantTotal
+
+            product = achat.produit
+            product.qteStock += achat.qteAchat
+            product.save()
+
+            if not achat.PayeEntierement:
+                remaining_amount = achat.qteAchat * achat.HTAchat
+                fournisseur = achat.fournisseur
+                fournisseur.solde += remaining_amount
                 fournisseur.save()
-            return redirect('achat') 
+
+            form = AchatForm()
+            return redirect('achat')
     else:
         form = AchatForm()
-        formset = ProduitAchatFormSet(instance=Achat())
-        fournisseur_form=FournisseurForm()
-    return render(request, 'magasin/achat/addAchat.html', {'form': form,'fournisseur_form':fournisseur_form,'formset': formset})
+
+    return render(request, "magasin/achat/addAchat.html", {'form': form})
 
 
 
 def newTransfert(request):
     cost = 0
+
     if request.method == 'POST':
         form = TransfertForm(request.POST)
+
         if form.is_valid():
             transfert = form.save(commit=False)
             quantity = form.cleaned_data['qteTransfert']
             product = form.cleaned_data['produit']
             product_price = product.HTProd
-            cost = product_price * quantity
-            transfert.cost = cost
-            transfert.save()
-            form = TransfertForm()
-            product.qteStock -= quantity
-            product.save()
-        return redirect('transfert')
+
+            if product.qteStock >= quantity:
+                cost = product_price * quantity
+                transfert.cost = cost
+                transfert.save()
+
+                product.qteStock -= quantity
+                product.save()
+
+                return redirect('transfert')
+            else:
+                form.add_error('qteTransfert', 'quantité inssufisante en stock.')
+
     else:
-        form = TransfertForm() 
-    return render(request,"magasin/transfert/addTransfert.html",{"form":form,'cout':cost})
+        form = TransfertForm()
+
+    return render(request, "magasin/transfert/addTransfert.html", {"form": form, 'cout': cost})
 
 def newVente(request):
-    return render(request,"magasin/vente/addVente.html")
+    if request.method == 'POST':
+        form = VenteForm(request.POST)
+        if form.is_valid():
+            vente = form.save()
+
+            product = vente.produit
+            product.qteStock -= vente.qteVente
+            product.save()
+
+            if not vente.PayeEnt:
+                remaining_amount = vente.qteVente * vente.prixUniVente
+                client = vente.client
+                client.credit += remaining_amount
+                client.save()
+
+            form = VenteForm()
+            return redirect('vente')
+    else:
+        form = VenteForm() 
+
+    return render(request,"magasin/vente/addVente.html",{'form':form})
 
 def deleteProduct(request, id):
     product_delete = get_object_or_404(Produit, CodeP=id)
@@ -249,16 +271,30 @@ def deleteEmploye(request, id):
     else:
         return render(request,"magasin/tables/deleteEmploye.html",{'Employe':employe_delete} )
    
+def deleteTransfert(request, id):
+    transfert = get_object_or_404(Transfert, CodeTransfert=id)
+
+    if request.method == 'POST':
+        product = transfert.produit
+        quantity = transfert.qteTransfert
+        product.qteStock += quantity 
+        product.save()
+
+        transfert.delete()
+
+        return redirect('transfert')
+    else:
+        return render(request,"magasin/transfert/deleteTransfert.html",{'transfert':transfert} )
+   
 
 def deleteAchat(request, id):
     Achat_delete = get_object_or_404(Achat, CodeAchat=id)
-    produits_achat = ProduitAchat.objects.filter(achat=Achat_delete)
 
-    if request.method=='POST': 
-        for produit_achat in produits_achat:
-            produit = produit_achat.produit
-            produit.qteStock += produit_achat.qteAchat
-            produit.save()
+    if request.method == 'POST':
+        produit = Achat_delete.produit
+        produit.qteStock += Achat_delete.qteAchat
+        produit.save()
+        
         Achat_delete.delete()
         return redirect('achat')
     else:
@@ -267,18 +303,22 @@ def deleteAchat(request, id):
 
 def deleteVente(request, id):
     vente_delete = get_object_or_404(Vente, CodeV=id)
-    produits_vente = ProduitVente.objects.filter(vente=vente_delete)
 
-    if request.method=='POST': 
-        for produit_vente in produits_vente:
-            produit = produit_vente.produit
-            produit.qteStock -= produit_vente.qteVente
-            produit.save()
+    if request.method == 'POST':
+        produit = vente_delete.produit
+        produit.qteStock += vente_delete.qteVente
+        produit.save()
+
+        if not vente_delete.PayeEnt:
+            client = vente_delete.client
+            client.credit -= (vente_delete.qteVente * vente_delete.prixUniVente)
+            client.save()
+
         vente_delete.delete()
         return redirect('vente')
     else:
-        return render(request,"magasin/vente/deleteVente.html",{'vente':vente_delete} )
-   
+        return render(request, "magasin/vente/deleteVente.html", {'vente': vente_delete})
+
 
 def editProduct(request, id):
     product_edit = get_object_or_404(Produit, CodeP=id)
@@ -350,18 +390,32 @@ def editEmploye(request, id):
         employe_save= EmployeForm(instance=employe_edit)
     return render(request,"magasin/tables/editEmploye.html",{'employe':employe_save})
 
+def editVente(request, id):
+    vente = get_object_or_404(Vente, CodeV=id)
+
+    if request.method == 'POST':
+        form = VenteForm(request.POST, instance=vente)
+        if form.is_valid():
+            form.save()
+            return redirect('vente')
+    else:
+        form = VenteForm(instance=vente)
+
+    return render(request, "magasin/vente/editVente.html", {'form': form, 'vente': vente})
 
 def editAchat(request, id):
-    Achat_edit = get_object_or_404(Achat, CodeAchat=id)
-    if request.method=='POST':
-        Achat_save= AchatForm(request.POST,request.FILES,instance=Achat_edit)
-        if Achat_save.is_valid():
-            Achat_save.save()
+    achat = get_object_or_404(Achat, CodeAchat=id)
+
+    if request.method == 'POST':
+        form = AchatForm(request.POST, instance=achat)
+        if form.is_valid():
+            form.save()
             return redirect('achat')
     else:
-        Achat_save= AchatForm(instance=Achat_edit)
-        formset = ProduitAchatFormSet(instance=Achat())
-    return render(request,"magasin/achat/editAchat.html",{'Achat':Achat_save,'formset':formset})
+        form = AchatForm(instance=achat)
+
+    return render(request, "magasin/achat/editAchat.html", {'form': form, 'achat': achat})
+
 
 def searchProduct(request):
     if request.method == "GET":
@@ -413,12 +467,19 @@ def searchAchatParFournisseur(request):
     return render(request,'magasin/achat/searchAchatParFournisseur.html')
 
 def searchVenteParClient(request):
+    montant_total = 0
+    
     if request.method == "GET":
-        query=request.GET['client']
+        query = request.GET.get('client', '')
         if query:
-            ventes=Vente.objects.filter(client__nomPrenomC__contains=query)
-            return render(request,'magasin/vente/searchVenteParClient.html', {'ventes': ventes })
-    return render(request,'magasin/vente/searchVenteParClient.html')
+            ventes = Vente.objects.filter(client__nomPrenomC__contains=query)
+            
+            montant_total = sum(vente.qteVente * vente.prixUniVente for vente in ventes)
+
+            return render(request, 'magasin/vente/searchVenteParClient.html', {'ventes': ventes, 'montant_total': montant_total})
+
+    return render(request, 'magasin/vente/searchVenteParClient.html', {'montant_total': montant_total})
+
 
 def searchAchatParDate(request):
     if request.method == "GET":
@@ -431,16 +492,25 @@ def searchAchatParDate(request):
             return render(request,'magasin/achat/searchAchatParDate.html', {'achats': achats })
     return render(request,'magasin/achat/searchAchatParDate.html')
 
+
 def searchVenteParDate(request):
+    montant_total = 0
+    
     if request.method == "GET":
-        debut=request.GET['dateDeb']
-        fin=request.GET['dateFin']
-        if debut and fin:            
+        debut = request.GET.get('dateDeb', '')
+        fin = request.GET.get('dateFin', '')
+        
+        if debut and fin:
             debut_date = datetime.strptime(debut, '%Y-%m-%d')
             fin_date = datetime.strptime(fin, '%Y-%m-%d')
-            ventes = Vente.objects.filter(dateVente__range=[debut_date, fin_date])            
-            return render(request,'magasin/vente/searchVenteParDate.html', {'ventes': ventes })
-    return render(request,'magasin/vente/searchVenteParDate.html')
+            
+            ventes = Vente.objects.filter(dateVente__range=[debut_date, fin_date])
+            
+            montant_total = sum(vente.qteVente * vente.prixUniVente for vente in ventes)
+
+            return render(request, 'magasin/vente/searchVenteParDate.html', {'ventes': ventes, 'montant_total': montant_total})
+
+    return render(request, 'magasin/vente/searchVenteParDate.html', {'montant_total': montant_total})
 
 def searchProduitParNom(request):
     if request.method == "GET":
@@ -455,7 +525,7 @@ def searchProduitParFournisseur(request):
     if request.method == "GET":
         query=request.GET['fournisseur']
         if query:
-            produits = Produit.objects.filter(produitachat__achat__fournisseur__nomPrenomF__contains=query)
+            produits = Produit.objects.filter(achat__fournisseur__nomPrenomF__contains=query)
             totalAchat = sum(produit.qteStock * produit.HTProd for produit in produits)
             return render(request,'magasin/stock/searchStockParFournisseur.html', {'produits': produits,'totalAchat':totalAchat,'query':query })
     return render(request,'magasin/stock/searchStockParFournisseur.html')
@@ -469,7 +539,7 @@ def searchProduitParDate(request):
         if debut and fin:            
             debut_date = datetime.strptime(debut, '%Y-%m-%d')
             fin_date = datetime.strptime(fin, '%Y-%m-%d')
-            produits = Produit.objects.filter(produitachat__achat__dateAchat__range=(debut_date, fin_date))
+            produits = Produit.objects.filter(achat__dateAchat__range=(debut_date, fin_date))
             totalAchat = sum(produit.qteStock * produit.HTProd for produit in produits)
             return render(request,'magasin/stock/searchStockParDate.html', {'produits': produits ,'totalAchat':totalAchat,'debut_date': debut_date, 'fin_date': fin_date})
     return render(request,'magasin/stock/searchStockParDate.html')
@@ -750,17 +820,13 @@ def printEmployes(request):
     return FileResponse(buffer, as_attachment=True, filename="employes.pdf")
 
 
-def completerPayement(request,id):
+def completerPayement(request, id):
     achat = get_object_or_404(Achat, CodeAchat=id)
-
-    # pour tester s'il a payé completement apr cet reglement
     reglements = Reglement.objects.filter(achat=id)
-    produits = ProduitAchat.objects.filter(achat=id)
-    montantTotal = sum(produit.HTAchat*produit.qteAchat for produit in produits)
+    montantTotal = achat.qteAchat * achat.HTAchat
     resteAPayer = montantTotal - sum(reglement.montantReg for reglement in reglements)
-
+    
     fournisseur = achat.fournisseur
-
 
     if request.method == 'POST':
         form = ReglementForm(request.POST)
@@ -768,28 +834,32 @@ def completerPayement(request,id):
             reglement = form.save(commit=False)
             reglement.achat = achat
             reglement.save()
+            
             fournisseur.solde -= reglement.montantReg
             fournisseur.save()
-            if(resteAPayer==0 or resteAPayer<0): 
+
+            reglements = Reglement.objects.filter(achat=id)
+            resteAPayer = montantTotal - sum(reglement.montantReg for reglement in reglements)
+
+            if resteAPayer <= 0:
                 achat.PayeEntierement = True
                 achat.save()
+
             form = ReglementForm()
-        return redirect('achat')
+            return redirect('achat') 
     else:
-        form = ReglementForm() 
-    return render(request,"magasin/achat/completerPayement.html",{"form":form})
+        form = ReglementForm()
 
-def PayementCreditSection(request,id):
+    return render(request, "magasin/achat/completerPayement.html", {"form": form, "resteAPayer": resteAPayer})
+
+
+def PayementCreditSection(request, id):
     vente = get_object_or_404(Vente, CodeV=id)
-
-    # pour tester s'il a payé completement apr ce paiment
     payementCredits = PayementCredit.objects.filter(vente=id)
-    produits = ProduitVente.objects.filter(vente=id)
-    montantTotal = sum(produit.prixUniVente*produit.qteVente for produit in produits)
+    montantTotal = vente.qteVente * vente.prixUniVente
     resteAPayer = montantTotal - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
-
+    
     client = vente.client
-
 
     if request.method == 'POST':
         form = PayementCreditForm(request.POST)
@@ -797,15 +867,23 @@ def PayementCreditSection(request,id):
             payementCredit = form.save(commit=False)
             payementCredit.vente = vente
             payementCredit.save()
+            
+            # Update the client's credit
             client.credit -= payementCredit.montantPayCredit
             client.save()
-            if(resteAPayer==0 or resteAPayer<0): 
+
+            # Recalculate the remaining amount to be paid
+            payementCredits = PayementCredit.objects.filter(vente=id)
+            resteAPayer = montantTotal - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
+
+            # Update PayeEnt field of the vente
+            if resteAPayer <= 0:
                 vente.PayeEnt = True
                 vente.save()
+
             form = PayementCreditForm()
         return redirect('vente')
     else:
-        form = PayementCreditForm() 
-    return render(request,"magasin/vente/completerPayement.html",{"form":form})
+        form = PayementCreditForm()
 
-    
+    return render(request, "magasin/vente/completerPayement.html", {"form": form, "resteAPayer": resteAPayer})

@@ -1,6 +1,5 @@
 from django import forms
-from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement, ProduitAchat, Transfert, PayementCredit
-from django.forms import inlineformset_factory
+from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement, Transfert, PayementCredit, Vente
 
 class ProduitForm(forms.ModelForm):
     class Meta:
@@ -64,45 +63,21 @@ class ReglementForm(forms.ModelForm):
         'dateReg': forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
         'montantReg': forms.NumberInput(attrs={'class':'form-control'}),
         }
-
-
-# class AchatForm(forms.ModelForm):
-#     class Meta:
-#         model = Achat
-#         fields = ['PayeEntierement', 'dateAchat','fournisseur']
-#         widgets = {
-#         'PayeEntierement': forms.CheckboxInput(attrs={'class':'form-check-input my-2'}),
-#         'dateAchat': forms.DateInput(attrs={'class':'form-control my-2', 'type':'date'}),
-#         'fournisseur': forms.Select(attrs={'class':'form-control my-2'}),
-#         # 'produit': forms.Select(attrs={'class':'form-control'}),
-#         # 'qteAchat': forms.NumberInput(attrs={'class':'form-control'}),
-#         # 'HTAchat': forms.NumberInput(attrs={'class':'form-control'}),
-#         }
+        
 
 class AchatForm(forms.ModelForm):
 
     class Meta:
         model = Achat
-        fields = ['PayeEntierement', 'dateAchat', 'fournisseur']
+        fields = ['PayeEntierement', 'dateAchat', 'fournisseur','produit','qteAchat','HTAchat']
         widgets = {
             'PayeEntierement': forms.CheckboxInput(attrs={'class': 'form-check-input my-2'}),
             'dateAchat': forms.DateInput(attrs={'class': 'form-control my-2', 'type': 'date'}),
             'fournisseur': forms.Select(attrs={'class': 'form-control my-2'}),
+            'produit': forms.Select(attrs={'class': 'form-control my-2'}),
+            'qteAchat': forms.NumberInput(attrs={'class': 'form-control my-2'}),
+            'HTAchat': forms.NumberInput(attrs={'class': 'form-control my-2'}),
         }
-
-
-class ProduitAchatForm(forms.ModelForm):
-    class Meta:
-        model = ProduitAchat
-        fields = ['produit', 'qteAchat', 'HTAchat']
-        widgets = {
-            'produit': forms.Select(attrs={'class': 'form-control'}),
-            'qteAchat': forms.NumberInput(attrs={'class': 'form-control'}),
-            'HTAchat': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
-
-ProduitAchatFormSet = inlineformset_factory(Achat, ProduitAchat, form=ProduitAchatForm, extra=1,can_delete=False)
-
 class TransfertForm(forms.ModelForm):
     class Meta:
         model = Transfert
@@ -122,4 +97,17 @@ class PayementCreditForm(forms.ModelForm):
         widgets = {
         'datePayCredit': forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
         'montantPayCredit': forms.NumberInput(attrs={'class':'form-control'}),
+        }
+
+class VenteForm(forms.ModelForm):
+    class Meta:
+        model = Vente
+        fields = ['produit', 'client', 'dateVente', 'qteVente','prixUniVente','PayeEnt']
+        widgets = {
+            'produit': forms.Select(attrs={'class': 'form-control my-2'}),
+            'client': forms.Select(attrs={'class': 'form-control my-2'}),
+            'dateVente': forms.DateInput(attrs={'class': 'form-control my-2', 'type': 'date'}),
+            'qteVente': forms.NumberInput(attrs={'class': 'form-control my-2'}),
+            'prixUniVente': forms.NumberInput(attrs={'class': 'form-control my-2'}),
+            'PayeEnt': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

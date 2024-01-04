@@ -34,6 +34,7 @@ urlpatterns = [
     path('deleteFournisseur/<int:id>',views.deleteFournisseur,name='delete fournisseur'),
     path('deleteCentre/<int:id>',views.deleteCentre,name='delete centre'),
     path('deleteEmploye/<int:id>',views.deleteEmploye,name='delete employe'),
+    path('deleteTransfert/<int:id>',views.deleteTransfert,name='delete transfert'),
     path('deleteAchat/<int:id>',views.deleteAchat,name='delete achat'),
     path('deleteVente/<int:id>',views.deleteVente,name='delete vente'),
     path('deleteProductStock/<int:id>',views.deleteProductStock,name='delete product stock'),
@@ -49,6 +50,7 @@ urlpatterns = [
     path('editCentre/<int:id>',views.editCentre,name='edit centre'),
     path('editEmploye/<int:id>',views.editEmploye,name='edit employe'),
     path('editAchat/<int:id>',views.editAchat,name='edit achat'),
+    path('editVente/<int:id>',views.editVente,name='edit vente'),
     path('editProductStock/<int:id>',views.editProductStock,name='edit product stock'),
 
 

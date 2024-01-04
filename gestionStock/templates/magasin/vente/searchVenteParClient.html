@@ -14,8 +14,9 @@
         Retourner
       </a>
       <div class="row">
+      <h2>Montant Total: {{ montant_total }} DA</h2>
         <div class="d-flex justify-content-between">
-          <h2>Resultats :</h2>
+            <h2>Resultats :</h2>
         </div>
       </div>
 
@@ -40,6 +41,7 @@
             <td>-</td>
             <td>-</td>
             <td>-</td>
+            <td>-</td>
           </tr>
           {% endif %} {% for vente in ventes %}
           <tr>
@@ -48,8 +50,8 @@
               {% if vente.PayeEnt %} Payement Entierement {% else %} Payement
               Partiellement {% endif %}
             </td>
-            <td>{{ vente.datevente }}</td>
-            <td>{{ vente.fournisseur }}</td>
+            <td>{{ vente.dateVente }}</td>
+            <td>{{ vente.client }}</td>
 
             <td>
               <a href="" class="btn btn-outline-secondary">Modifier</a>
