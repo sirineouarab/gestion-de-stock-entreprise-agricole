@@ -1,5 +1,7 @@
 from django import forms
 from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement, Transfert, PayementCredit, Vente
+from django_select2.forms import ModelSelect2Widget
+
 
 class ProduitForm(forms.ModelForm):
     class Meta:
@@ -74,10 +76,11 @@ class AchatForm(forms.ModelForm):
             'PayeEntierement': forms.CheckboxInput(attrs={'class': 'form-check-input my-2'}),
             'dateAchat': forms.DateInput(attrs={'class': 'form-control my-2', 'type': 'date'}),
             'fournisseur': forms.Select(attrs={'class': 'form-control my-2'}),
-            'produit': forms.Select(attrs={'class': 'form-control my-2'}),
+            'produit': forms.Select(attrs={'class': 'form-control my-2'}),          
             'qteAchat': forms.NumberInput(attrs={'class': 'form-control my-2'}),
             'HTAchat': forms.NumberInput(attrs={'class': 'form-control my-2'}),
         }
+
 class TransfertForm(forms.ModelForm):
     class Meta:
         model = Transfert
@@ -102,12 +105,23 @@ class PayementCreditForm(forms.ModelForm):
 class VenteForm(forms.ModelForm):
     class Meta:
         model = Vente
-        fields = ['produit', 'client', 'dateVente', 'qteVente','prixUniVente','PayeEnt']
+
+        fields = ['PayeEntierement', 'dateAchat', 'fournisseur','produit','qteAchat','HTAchat']
         widgets = {
-            'produit': forms.Select(attrs={'class': 'form-control my-2'}),
-            'client': forms.Select(attrs={'class': 'form-control my-2'}),
+            'PayeEntierement': forms.CheckboxInput(attrs={'class': 'form-check-input my-2'}),
+            'dateAchat': forms.DateInput(attrs={'class': 'form-control my-2', 'type': 'date'}),
+            'fournisseur': forms.Select(attrs={'class': 'form-control my-2'}),
+            'produit': forms.Select(attrs={'class': 'form-control my-2'}),          
+            'qteAchat': forms.NumberInput(attrs={'class': 'form-control my-2'}),
+            'HTAchat': forms.NumberInput(attrs={'class': 'form-control my-2'}),
+        }
+
+        fields = ['PayeEnt', 'dateVente','client', 'produit', 'qteVente','prixUniVente']
+        widgets = {
+            'PayeEnt': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'dateVente': forms.DateInput(attrs={'class': 'form-control my-2', 'type': 'date'}),
+            'client': forms.Select(attrs={'class': 'form-control my-2'}),
+            'produit': forms.Select(attrs={'class': 'form-control my-2'}),
             'qteVente': forms.NumberInput(attrs={'class': 'form-control my-2'}),
             'prixUniVente': forms.NumberInput(attrs={'class': 'form-control my-2'}),
-            'PayeEnt': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
