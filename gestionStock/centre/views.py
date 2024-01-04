@@ -6,7 +6,7 @@ from .models import Produit,Vente,Client,Employe, Absence, Avance
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .forms import SaleForm,AbsenceForm
+from .forms import SaleForm,AbsenceForm,AvanceForm
 from django.db.models import Sum,Count
 import datetime
 from datetime import date
@@ -115,16 +115,32 @@ def absence_create(request):
     if request.method == 'POST':
         form = AbsenceForm(request.POST)
         if form.is_valid():
-            absence=form.save(commit=False)
-            absence.save()
-            return redirect('employe-management')  # Redirige vers la liste des absences
+            form.save()
+            return redirect('employe-management')
     else:
         form = AbsenceForm()
 
     return render(request, 'centre/absence.html', {'form': form})
+
 class AbsenceChartAPIView(APIView):
     def get(self, request, format=None):
         absences_data = Absence.objects.values('emp__nomPrenomE').annotate(total_absences=Count('emp__absence__dateAbsence')).order_by('emp__nomPrenomE')
         serializer = AbsenceChartSerializer(absences_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
  
+
+
+def paiement(request):
+    template_name = 'centre/paiement.html'
+
+    avances = Avance.objects.filter(dateAvance__month__gte=1, dateAvance__month__lte=12)
+
+    if request.method == 'POST':
+        form = AvanceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('paiement')
+    else:
+        form = AvanceForm()
+
+    return render(request, template_name, {'avances': avances, 'form': form})
