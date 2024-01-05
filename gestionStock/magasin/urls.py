@@ -8,8 +8,8 @@ urlpatterns = [
 
     #tables urls
     path('tablesManagement/',views.tablesManagement,name='tablesManagement'),
-    path('newProduct/',views.newProduct,name='new product'),
     #produits CRUD
+    path('newProduct/',views.newProduct,name='new product'),
     path('editProduct/<int:id>',views.editProduct,name='edit product'),
     path('deleteProduct/<int:id>',views.deleteProduct,name='delete product'),
     path('searchProduct/',views.searchProduct,name='search product'),
