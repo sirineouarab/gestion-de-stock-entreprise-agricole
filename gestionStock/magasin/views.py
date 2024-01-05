@@ -458,6 +458,14 @@ def editAchat(request, id):
                     fournisseur.solde += ancien_reste_a_payer
                     fournisseur.save()
 
+            if achat.PayeEntierement:
+                # si PayeEntierement diminue le solde
+                fournisseur.solde -= nouveau_reste_a_payer
+            else:
+                # sinon PayeEntierement solde
+                fournisseur.solde += nouveau_reste_a_payer
+            fournisseur.save()
+
             if nouveau_reste_a_payer<=0: #tester si 0 reste a payer
                     achat.PayeEntierement = True
                     form.save() #savugarder les modifications
@@ -626,9 +634,15 @@ def editVente(request, id):
                 # mettre a jour le credit pour le nouveau client
                 if client is not None:
                     client.credit += ancien_reste_a_payer
-                    client.save()
 
-            
+            if vente.PayeEnt:
+                # si PayEnt diminue le credit
+                client.credit -= nouveau_reste_a_payer
+            else:
+                # sinon ajouter credit
+                client.credit += nouveau_reste_a_payer
+            client.save()
+
             if nouveau_reste_a_payer<=0: #tester si 0 reste a payer
                     vente.PayeEnt = True
                     form.save() #savugarder les modifications
