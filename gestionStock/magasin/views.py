@@ -421,28 +421,46 @@ def editAchat(request, id):
     achat = get_object_or_404(Achat, CodeAchat=id)
     ancien_qteAchat = achat.qteAchat
     ancien_HTAchat = achat.HTAchat
+    ancien_fournisseur = achat.fournisseur
     #to keep track of old values
 
     if request.method == 'POST':
         form = AchatForm(request.POST, instance=achat)
         if form.is_valid():
+            form.save() #savugarder les modifications
             #get the new values
             qteAchat = form.cleaned_data['qteAchat']
             HTAchat = form.cleaned_data['HTAchat']
+            fournisseur = form.cleaned_data['fournisseur']
             #calculer l'ancien montant
             ancien_montant = ancien_qteAchat * ancien_HTAchat
-            form.save() #savugarder les modifications
             nouveau_montant = qteAchat * HTAchat #le nouveau montant
-            fournisseur = achat.fournisseur # founisseur concerné
             reglements = Reglement.objects.filter(achat=id)
             #calculer l'ancienne valeur reste a payer
             ancien_reste_a_payer = ancien_montant - sum(reglement.montantReg for reglement in reglements)
             #calculer la nouvelle valeur reste a payer
             nouveau_reste_a_payer = nouveau_montant - sum(reglement.montantReg for reglement in reglements)
-            #mettre a jour le solde
-            fournisseur.solde -= ancien_reste_a_payer
-            fournisseur.solde += nouveau_reste_a_payer
-            fournisseur.save()
+
+            if qteAchat != ancien_qteAchat or HTAchat != ancien_HTAchat:
+                #mettre a jour le solde
+                fournisseur.solde -= ancien_reste_a_payer
+                fournisseur.solde += nouveau_reste_a_payer
+                fournisseur.save()
+
+            if ancien_fournisseur != fournisseur:
+                # mettre a jour le solde pour l ancien fournisseur
+                if ancien_fournisseur is not None:
+                    ancien_fournisseur.solde -= ancien_reste_a_payer
+                    ancien_fournisseur.save()
+
+                # mettre a jour le solde pour le nouveau fournisseur
+                if fournisseur is not None:
+                    fournisseur.solde += ancien_reste_a_payer
+                    fournisseur.save()
+
+            if nouveau_reste_a_payer<=0: #tester si 0 reste a payer
+                    achat.PayeEntierement = True
+                    form.save() #savugarder les modifications
             return redirect('achat')
     else:
         form = AchatForm(instance=achat)
@@ -574,17 +592,18 @@ def editVente(request, id):
     vente = get_object_or_404(Vente, CodeV=id)
     ancien_qteVente = vente.qteVente
     ancien_prixUniVente = vente.prixUniVente
+    ancien_client = vente.client
     #to keep track of old values
 
     if request.method == 'POST':
         form = VenteForm(request.POST, instance=vente)
         if form.is_valid():
+            form.save() #savugarder les modifications
             #get the new values
             qteVente = form.cleaned_data['qteVente']
             prixUniVente = form.cleaned_data['prixUniVente']
             #calculer l'ancien montant
             ancien_montant = ancien_qteVente * ancien_prixUniVente
-            form.save() #savugarder les modifications
             nouveau_montant = qteVente * prixUniVente #le nouveau montant
             client = vente.client # client concerné
             payementCredits = PayementCredit.objects.filter(vente=id)
@@ -592,10 +611,27 @@ def editVente(request, id):
             ancien_reste_a_payer = ancien_montant - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
             #calculer la nouvelle valeur reste a payer
             nouveau_reste_a_payer = nouveau_montant - sum(payementCredit.montantPayCredit for payementCredit in payementCredits)
-            #mettre a jour le credit
-            client.credit -= ancien_reste_a_payer
-            client.credit += nouveau_reste_a_payer
-            client.save()
+            if qteVente != ancien_qteVente or prixUniVente != ancien_prixUniVente:
+                #mettre a jour le credit
+                client.credit -= ancien_reste_a_payer
+                client.credit += nouveau_reste_a_payer
+                client.save()
+
+            if ancien_client != client:
+                # mettre a jour le credit pour l ancien client
+                if ancien_client is not None:
+                    ancien_client.credit -= ancien_reste_a_payer
+                    ancien_client.save()
+
+                # mettre a jour le credit pour le nouveau client
+                if client is not None:
+                    client.credit += ancien_reste_a_payer
+                    client.save()
+
+            
+            if nouveau_reste_a_payer<=0: #tester si 0 reste a payer
+                    vente.PayeEnt = True
+                    form.save() #savugarder les modifications
             return redirect('vente')
     else:
         form = VenteForm(instance=vente)
