@@ -43,7 +43,9 @@ urlpatterns = [
     #achat urls
     path('achat/',views.achat,name='achat'),
     path('achat/<int:id>',views.achatDetails,name='achat details'),
-    path('newAchat/',views.newAchat,name='new achat'),
+    path('newAchat/', views.newAchat, name='new achat'),
+    path('newAchat/<int:fournisseur>/', views.newAchatNewFournisseur, name='new achat'),
+    path('newFournisseurAchat/',views.newFournisseurAchat,name='new fournisseur achat'),
     path('editAchat/<int:id>',views.editAchat,name='edit achat'),
     path('deleteAchat/<int:id>',views.deleteAchat,name='delete achat'),
     path('searchAchatParFournisseur/',views.searchAchatParFournisseur,name='searchAchatParFournisseur'),

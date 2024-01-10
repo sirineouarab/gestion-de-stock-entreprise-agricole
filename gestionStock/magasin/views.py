@@ -417,6 +417,47 @@ def newAchat(request):
         form = AchatForm()
     return render(request, "magasin/achat/addAchat.html", {'form': form})
 
+def newAchatNewFournisseur(request,fournisseur):
+    if request.method == 'POST':
+        form = AchatForm(request.POST)
+        if form.is_valid():
+            achat = form.save()
+            #stockage du produit acheté
+            product = achat.produit
+            product.qteStock += achat.qteAchat
+            product.save()
+
+            # si le paiement est partiel on ajouter le solde au fournisseur concerné
+            if not achat.PayeEntierement:
+                remaining_amount = achat.qteAchat * achat.HTAchat
+                fournisseur = achat.fournisseur
+                fournisseur.solde += remaining_amount
+                fournisseur.save()
+
+            form = AchatForm()
+            form = AchatForm(initial={'fournisseur': fournisseur})
+
+            return redirect('achat')
+    else:
+        form = AchatForm()
+        form = AchatForm(initial={'fournisseur': fournisseur})
+
+    return render(request, "magasin/achat/addAchat.html", {'form': form})
+
+#inserer nouveau fournisseur quand on insert nv achat
+def newFournisseurAchat(request):
+    if request.method == 'POST':
+        form = FournisseurForm(request.POST)
+        if form.is_valid():
+            fournisseur = form.save()
+            inserted_fournisseur_id = fournisseur.CodeF  # CodeF of the inserted fournisseur
+            return redirect('new achat', fournisseur=inserted_fournisseur_id)
+
+    else:
+        form = FournisseurForm() 
+
+    return render(request, "magasin/achat/addFournisseurAchat.html", {"form": form})
+
 def editAchat(request, id):
     achat = get_object_or_404(Achat, CodeAchat=id)
     ancien_qteAchat = achat.qteAchat
