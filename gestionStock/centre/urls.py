@@ -3,7 +3,7 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-from .views import ProduitVenteChart,chart_view,TopCustomerChart,chart_view2,EmployeManagementView, AbsenceChartAPIView,absence_create,paiement
+from .views import ProduitVenteChart,chart_view,TopCustomerChart,chart_view2,EmployeManagementView, AbsenceChartAPIView,absence_create,paiement,liste_employes
 
 
 
@@ -18,5 +18,6 @@ urlpatterns = [
     path('employe-management/', EmployeManagementView.as_view(), name='employe-management'),
     path('api/absence-chart/', AbsenceChartAPIView.as_view(), name='absence-chart-api'),
     path('absence/', views.absence_create,name='absence'),
-    path('avance/', views.paiement, name='paiement'),
+    path('avance/', views.paiement, name='avance'),
+    path('payroll/', views.liste_employes, name='payroll'),
 ]

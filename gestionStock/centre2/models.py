@@ -17,7 +17,7 @@ class Employe(models.Model):
     adresseE = models.CharField(max_length=60)
     telephoneE = models.CharField(max_length=20)
     salaireJour = models.IntegerField()
-   ## centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
+    centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
     def __str__(self):
         return self.nomPrenomE
 
