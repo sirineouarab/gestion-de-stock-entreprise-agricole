@@ -24,6 +24,8 @@ urlpatterns = [
     path('dashboard/',include('dashboard.urls')),
     path('',include('magasin.urls')),
     path('centre/',include('centre.urls')),
+    
+   
 
     
 ]
