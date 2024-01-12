@@ -1,0 +1,47 @@
+{% extends 'centre/base1.html' %} {% block content %} {% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Employés</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Liste des Employés</h2>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Nom de l'employé</th>
+            <th>Salaire du jour</th>
+            <th>Salaire à la fin du mois</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for employe in employes %}
+            <tr>
+                <td>{{ employe.nomPrenomE }}</td>
+                <td>{{ employe.salaireJour }}</td>
+                <td>{{ employe.salaireFinMois }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+<!-- centre/templates/centre/liste_employes.html -->
+<form method="post" action="{% url 'payroll' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Calculer les salaires à la fin du mois</button>
+  </form>
+  
+  <!-- La table et le reste du code ici... -->
+  
+</div>
+
+</body>
+</html>
+{%endblock content %}

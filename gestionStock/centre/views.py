@@ -9,7 +9,7 @@ from rest_framework import status
 from .forms import SaleForm,AbsenceForm,AvanceForm
 from django.db.models import Sum,Count
 import datetime
-from datetime import date
+from datetime import date,timedelta,datetime
 from dateutil.relativedelta import relativedelta
 from django.http import JsonResponse
 from .serializers import ProduitVenteSerializer,TopCustomerSerializer,AbsenceChartSerializer
@@ -94,7 +94,7 @@ class EmployeManagementView(View):
     def get(self, request):
         # Partie 1 - Overview
         total_employees = Employe.objects.count()
-        current_date = datetime.date.today()
+        current_date = date.today()
         present_percentage = 100 * Absence.objects.filter(dateAbsence=current_date).values('emp').annotate(count=Count('emp')).count() / total_employees
         total_absences = Absence.objects.filter(dateAbsence=current_date).count()
 
@@ -151,5 +151,37 @@ def liste_employes(request):
     template_name = 'centre/liste_employes.html'
 
     employes = Employe.objects.all()
+
+    return render(request, template_name, {'employes': employes})
+
+
+
+# LISTES EMPLOYE AVEC SALAIRE 
+def liste_employes(request):
+    template_name = 'centre/liste_employes.html'
+
+    employes = Employe.objects.all()
+
+    if request.method == 'POST':
+        # Calculer les salaires à la fin du mois
+        for employe in employes:
+            salaire_jour = employe.salaireJour
+
+            # Nombre total de jours dans le mois
+            dernier_jour_mois = datetime.now().replace(day=1, month=datetime.now().month + 1, hour=0, minute=0, second=0, microsecond=0) - timedelta(days=1)
+            nombre_jours_mois = dernier_jour_mois.day
+
+            # Nombre de jours d'absence du mois courant
+            absences_mois = Absence.objects.filter(emp=employe, dateAbsence__month=datetime.now().month).count()
+
+            # Montant total des demandes d'avance du mois courant
+            avances_mois = Avance.objects.filter(employe=employe, dateAvance__month=datetime.now().month).aggregate(Sum('montantAvance'))['montantAvance__sum'] or 0
+
+            # Calcul du salaire à la fin du mois
+            salaire_fin_mois = salaire_jour * (nombre_jours_mois - absences_mois) - avances_mois
+
+            # Mettre à jour le salaire à la fin du mois dans l'objet Employe
+            employe.salaireFinMois = salaire_fin_mois
+            employe.save()
 
     return render(request, template_name, {'employes': employes})
