@@ -32,9 +32,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    
     'magasin.apps.MagasinConfig',
     'dashboard.apps.DashboardConfig',
     'centre.apps.CentreConfig',
+    'centre2.apps.Centre2Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

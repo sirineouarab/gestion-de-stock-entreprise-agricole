@@ -144,3 +144,12 @@ def paiement(request):
         form = AvanceForm()
 
     return render(request, template_name, {'avances': avances, 'form': form})
+
+
+
+def liste_employes(request):
+    template_name = 'centre/liste_employes.html'
+
+    employes = Employe.objects.all()
+
+    return render(request, template_name, {'employes': employes})
