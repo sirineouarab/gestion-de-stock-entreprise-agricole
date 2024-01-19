@@ -49,13 +49,13 @@
             <th scope="col">Date</th>
             <th scope="col">Quantité</th>
             <th scope="col">Coût</th>
+            <th scope="col">Supprimer</th>
           </tr>
         </thead>
         <tbody>
           {% if transferts|length == 0 %}
           <tr>
             <th scope="row">-</th>
-            <td>-</td>
             <td>-</td>
             <td>-</td>
             <td>-</td>
@@ -69,6 +69,13 @@
             <td>{{ transfert.dateTransfert }}</td>
             <td>{{ transfert.qteTransfert }}</td>
             <td>{{ transfert.cost }}</td>
+            <td>
+              <a
+                href="{% url 'delete transfert' transfert.CodeTransfert %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
 
             {% endfor %}
           </tr>

@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\21366\Desktop\Gestion de stock d'une entreprise agricole\gestion-stock
+set VIRTUAL_ENV=C:\Users\21366\Desktop\testt\gestion-stock
 
 if not defined PROMPT set PROMPT=$P$G
 

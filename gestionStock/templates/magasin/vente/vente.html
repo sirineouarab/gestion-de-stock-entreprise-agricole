@@ -15,7 +15,7 @@
           <h2>Liste des Ventes</h2>
           <div>
             <a href="{% url 'new vente' %}" class="btn btn-primary"
-              >Nouvel Vente +</a
+              >Nouvelle Vente +</a
             >
           </div>
         </div>
@@ -87,6 +87,7 @@
             <td>-</td>
             <td>-</td>
             <td>-</td>
+            <td>-</td>
           </tr>
           {% endif %} {% for vente in ventes %}
           <tr>
@@ -99,7 +100,7 @@
             <td>{{ vente.client }}</td>
 
             <td>
-              <a href="" class="btn btn-outline-secondary">Modifier</a>
+              <a href="{% url 'edit vente' vente.CodeV %}" class="btn btn-outline-secondary">Modifier</a>
             </td>
             <td>
               <a
