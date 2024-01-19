@@ -3,11 +3,18 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db.models import Sum
-from magasin.models import Transfert
+from magasin.models import Produit as ProduitTransfert
 
 class Centre(models.Model):
     CodeCentre = models.AutoField(primary_key=True)
     DesignationCentre = models.CharField(max_length=40)
+
+class TransfertRecu(models.Model):
+    produitTr = models.ForeignKey(ProduitTransfert, on_delete=models.CASCADE)
+    centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
+    dateTransfert = models.DateField()
+    qteTransfert = models.IntegerField()
+    cost = models.IntegerField(default=0)    
 
 class Employe(models.Model):
     CodeE = models.AutoField(primary_key=True)
@@ -54,10 +61,11 @@ class Produit(models.Model):
 
 
 
+
 class Vente(models.Model):
     CodeV = models.AutoField(primary_key=True)
     date =models.DateField()
-    PayeEnt = models.BooleanField(null=True)
+    PayEnt = models.BooleanField(default=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     qteVente = models.IntegerField(default=0)
@@ -65,7 +73,6 @@ class Vente(models.Model):
     prix_total=models.IntegerField(default=0)
     def montant_total_ventes(self):
         return Vente.objects.aggregate(Sum('prix_total'))['prix_total__sum'] or 0
-
 
 class CreditPayment(models.Model):
     CodePayCredit = models.AutoField(primary_key=True)
@@ -75,4 +82,11 @@ class CreditPayment(models.Model):
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
     
 
+
+class Reglement(models.Model):
+    CodeReg = models.AutoField(primary_key=True)
+    montantReg = models.IntegerField()
+    dateReg = models.DateField()
+    credit= models.ForeignKey(CreditPayment, on_delete=models.CASCADE)
+    
 

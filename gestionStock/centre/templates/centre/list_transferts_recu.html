@@ -1,0 +1,39 @@
+
+  {% extends 'centre/base.html' %} {% block content %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Employés</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-5">
+  <h2>Liste des Transferts Reçus</h2>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Date de Transfert</th>
+        <th>Quantité Transférée</th>
+        <th>Coût</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transfert_recu in transferts_recu %}
+        <tr>
+          <td>{{ transfert_recu.produitTr }}</td>
+          <td>{{ transfert_recu.dateTransfert }}</td>
+          <td>{{ transfert_recu.qteTransfert }}</td>
+          <td>{{ transfert_recu.cost }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</body>
+</html>
+{% endblock %}

@@ -2,7 +2,7 @@ from django.http import HttpResponseBadRequest
 from django.views.generic import TemplateView,View
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import Produit,Vente,Client,Employe, Absence, Avance
+from .models import Produit,Vente,Client,Employe, Absence, Avance,CreditPayment,TransfertRecu
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -42,7 +42,20 @@ def record_sale(request):
 
             # Appeler la fonction pour mettre à jour le stock
             update_stock_after_sale(sale.pk)
-
+            if not sale.PayEnt:
+                # Si le paiement n'est pas entièrement effectué, traiter le montant payé
+                montant_paye = form.cleaned_data.get('montant_paye')
+                CreditPayment.objects.create(
+                    date=sale.date,
+                    client=sale.client,
+                    amount_paid=montant_paye,
+                    vente=sale
+                )
+                
+                # Mise à jour automatique du crédit client (ajoute automatiquement le reste à payer au crédit client)
+                reste_a_payer = sale.prix_total - montant_paye
+                sale.client.creditClient += reste_a_payer
+                sale.client.save()
             return redirect('afficher_vente')
     form = SaleForm()
 
@@ -185,3 +198,9 @@ def liste_employes(request):
             employe.save()
 
     return render(request, template_name, {'employes': employes})
+
+
+
+def list_transferts_recu(request):
+    transferts_recu = TransfertRecu.objects.all()
+    return render(request, 'centre/list_transferts_recu.html', {'transferts_recu': transferts_recu})

@@ -41,13 +41,16 @@
               <br />
               <br/>
          
-         </div><!--
-          <div class="card-body">{% csrf_token %}  
-            <!-/- {{ form.as_p }} --/>
-            {{ form.date.label_tag }}
-            {{ form.date}}
-          
-           </div> -->
+         </div>
+ <!--       
+           {{ form.PayEnt }}
+                
+                {% if not form.PayEnt.value %}
+                    <!- Champ montant_paye pour saisir le montant payé ->
+                    <label>Montant Payé : </label>
+                    {{ form.montant_paye }}
+                {% endif %}
+        -->              
           <div class="fieldWrapper">
             {{ form.prix_total.label_tag }}
             {{ form.prix_total }}
