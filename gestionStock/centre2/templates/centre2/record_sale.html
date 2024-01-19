@@ -42,15 +42,15 @@
               <br/>
          
          </div>
-       
-           {{ form.PayEnt }}
-                
+         <label>Paiement complet  : </label>
+           
+          <!--
                 {% if not form.PayEnt.value %}
-                    <!-- Champ montant_paye pour saisir le montant payé -->
+                    <!- Champ montant_paye pour saisir le montant payé ->
                     <label>Montant Payé : </label>
                     {{ form.montant_paye }}
                 {% endif %}
-              
+        -->
           <div class="fieldWrapper">
             {{ form.prix_total.label_tag }}
             {{ form.prix_total }}
