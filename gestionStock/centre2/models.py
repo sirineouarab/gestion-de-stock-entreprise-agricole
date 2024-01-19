@@ -58,7 +58,7 @@ class Produit(models.Model):
 class Vente(models.Model):
     CodeV = models.AutoField(primary_key=True)
     date =models.DateField()
-    PayeEnt = models.BooleanField(null=True)
+    
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     produit = models.ForeignKey(Produit, on_delete=models.CASCADE)
     qteVente = models.IntegerField(default=0)
