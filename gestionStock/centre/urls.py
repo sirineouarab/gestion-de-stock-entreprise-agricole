@@ -3,7 +3,7 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-from .views import ProduitVenteChart,chart_view,TopCustomerChart,chart_view2,EmployeManagementView, AbsenceChartAPIView,absence_create,paiement,liste_employes,list_transferts_recu
+from .views import ProduitVenteChart,chart_view,TopCustomerChart,chart_view2,EmployeManagementView,add_reglement, AbsenceChartAPIView,absence_create,paiement,liste_employes,list_transferts_recu,calculate_total_and_benefit
 
 
 
@@ -21,4 +21,6 @@ urlpatterns = [
     path('avance/', views.paiement, name='avance'),
     path('payroll/', views.liste_employes, name='payroll'),
     path('list_transferts_recu/', views.list_transferts_recu, name='list_transferts_recu'),
+   path('add_reglement/', add_reglement, name='add_reglement'),
+     path('analyse/', views.calculate_total_and_benefit, name='analyse'),
 ]

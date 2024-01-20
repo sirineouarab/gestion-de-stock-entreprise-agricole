@@ -3,7 +3,7 @@ from django import forms
 from django.forms import inlineformset_factory
 
 
-from .models import Vente,Absence,Employe,Avance
+from .models import Vente,Absence,Employe,Avance,Client,Reglement
 
 class SaleForm(forms.ModelForm):
   
@@ -41,3 +41,8 @@ class AvanceForm(forms.ModelForm):
             'employe': forms.Select(attrs={'class': 'form-control'}),
             'montantAvance': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+class ReglementForm(forms.ModelForm):
+    class Meta:
+        model = Reglement
+        fields = ['client', 'montantReg', 'dateReg']

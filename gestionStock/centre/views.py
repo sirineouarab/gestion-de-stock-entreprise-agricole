@@ -2,11 +2,11 @@ from django.http import HttpResponseBadRequest
 from django.views.generic import TemplateView,View
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import Produit,Vente,Client,Employe, Absence, Avance,CreditPayment,TransfertRecu
+from .models import Produit,Vente,Client,Employe, Absence, Avance,CreditPayment,TransfertRecu,Reglement
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .forms import SaleForm,AbsenceForm,AvanceForm
+from .forms import SaleForm,AbsenceForm,AvanceForm,ReglementForm
 from django.db.models import Sum,Count
 import datetime
 from datetime import date,timedelta,datetime
@@ -81,7 +81,7 @@ class ProduitVenteChart(APIView):
 class TopCustomerChart(APIView):
     def get(self, request, format=None):
        
-        end_date = datetime.date.today()
+        end_date = date.today()
         start_date = end_date - relativedelta(months=12)
 
         data = (
@@ -202,3 +202,56 @@ def liste_employes(request):
 def list_transferts_recu(request):
     transferts_recu = TransfertRecu.objects.all()
     return render(request, 'centre/list_transferts_recu.html', {'transferts_recu': transferts_recu})
+
+
+
+
+def calculate_total_and_benefit(request):
+    total_ventes = Vente.objects.aggregate(Sum('prix_total'))['prix_total__sum'] or 0
+    total_transferts_recu = TransfertRecu.objects.aggregate(Sum('cost'))['cost__sum'] or 0
+
+    benefit = total_ventes - total_transferts_recu
+
+    context = {
+        'total_ventes': total_ventes,
+        'total_transferts_recu': total_transferts_recu,
+        'benefit': benefit,
+    }
+
+    return render(request, 'centre/analyse.html', context)
+
+def get_credit_amount(client_id):
+    credit_payments = CreditPayment.objects.filter(client_id=client_id)
+    total_credit = sum(payment.amount_paid for payment in credit_payments)
+    return total_credit
+
+
+
+def update_credit(client_id):
+    credit_amount = get_credit_amount(client_id)
+    return JsonResponse({'credit_amount': credit_amount})
+
+def add_reglement(request):
+    form = ReglementForm()
+
+    # Handle form submission
+    if request.method == 'POST':
+        form = ReglementForm(request.POST)
+        if form.is_valid():
+            reglement = form.save()
+
+            # Update credit for the selected client
+            update_credit(reglement.client.CodeC)
+
+            return redirect('add_reglement')  # Redirect to clear the form
+
+    # Pass the initial credit amount to the template
+    client_id = request.POST.get('client', None)
+    initial_credit = get_credit_amount(client_id)
+    
+    return render(request, 'centre/add_reglement.html', {'form': form, 'initial_credit': initial_credit})
+
+def get_client_credit(request):
+    client_id = request.GET.get('client_id')
+    credit_amount = get_credit_amount(client_id)
+    return JsonResponse({'credit_amount': credit_amount})

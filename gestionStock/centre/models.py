@@ -78,8 +78,6 @@ class CreditPayment(models.Model):
 
 class Reglement(models.Model):
     CodeReg = models.AutoField(primary_key=True)
-    montantReg = models.IntegerField()
+    montantReg = models.DecimalField(max_digits=10, decimal_places=2)
     dateReg = models.DateField()
-    credit= models.ForeignKey(CreditPayment, on_delete=models.CASCADE)
-    
-
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
