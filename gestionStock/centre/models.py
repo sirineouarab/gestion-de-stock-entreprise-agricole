@@ -48,9 +48,6 @@ class Client(models.Model):
     def __str__(self):
         return self.nomPrenomC
 
-
-
-
 class Produit(models.Model):
     produit = models.AutoField(primary_key=True)
     Designation = models.CharField(max_length=40)
@@ -58,9 +55,6 @@ class Produit(models.Model):
     HTProd = models.DecimalField(max_digits=10, decimal_places=2)
     def __str__(self):
         return self.Designation
-
-
-
 
 class Vente(models.Model):
     CodeV = models.AutoField(primary_key=True)
@@ -71,9 +65,8 @@ class Vente(models.Model):
     qteVente = models.IntegerField(default=0)
     prixUniVente = models.IntegerField(default=0,validators=[MinValueValidator(0)])
     prix_total=models.IntegerField(default=0)
-    def montant_total_ventes(self):
-        return Vente.objects.aggregate(Sum('prix_total'))['prix_total__sum'] or 0
-
+    montant_paye=models.IntegerField(default=0)
+   
 class CreditPayment(models.Model):
     CodePayCredit = models.AutoField(primary_key=True)
     date = models.DateField()
