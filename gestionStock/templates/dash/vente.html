@@ -1,13 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-    {% extends 'dash/base.html' %} {% block content %} {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vente Analyse</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" /></head>
-<body>
-    <h1>vente</h1>
-</body>
+    {% extends 'dash/base.html' %}
+    {% block content %}
+    {% load static %}
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Vente Analyse</title>
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+
+    <body>
+
+        <div class="col-md-10 col-12 mx-auto mt-4">
+            <h1 class="my-4">Vente</h1>
+
+            <h2>Total Sales: {{ total_vente }}</h2>
+            <h2>Total Profit: {{ total_profit }}</h2>
+
+            <h2>Top Clients:</h2>
+            <ul>
+                {% for client in top_clients %}
+                    <li>{{ client.nomPrenomC }} - {{ client.total_vente }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2>Best Sellers:</h2>
+            <ul>
+                {% for product in best_sellers %}
+                    <li>{{ product.Designation }} - {{ product.total_vente }}</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Bar Chart -->
+            <div class="my-4">
+                <canvas id="myChart" width="400" height="300"></canvas>
+                <script>
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: [{% for client in top_clients %} '{{ client.nomPrenomC }}', {% endfor %}],
+                            datasets: [{
+                                label: 'Total Sales by Client',
+                                data: [{% for client in top_clients %} {{ client.total_vente }}, {% endfor %}],
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.7)',
+                                    'rgba(54, 162, 235, 0.7)',
+                                    'rgba(255, 206, 86, 0.7)',
+                                    'rgba(75, 192, 192, 0.7)',
+                                    'rgba(153, 102, 255, 0.7)',
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)',
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                </script>
+            </div>
+
+        </div>
+
+    {% endblock %}
+    </body>
 </html>
-{% endblock content %}
