@@ -51,11 +51,14 @@ def record_sale(request):
                     amount_paid=montant_paye,
                     vente=sale
                 )
-                
+             
                 # Mise à jour automatique du crédit client (ajoute automatiquement le reste à payer au crédit client)
                 reste_a_payer = sale.prix_total - montant_paye
-                sale.client.creditClient += reste_a_payer
+                sale.client.credit += reste_a_payer
                 sale.client.save()
+            if  sale.PayEnt:    
+                sale.montant_paye=sale.prix_total
+                sale.save()
             return redirect('afficher_vente')
     form = SaleForm()
 
@@ -63,11 +66,6 @@ def record_sale(request):
 
 
 
-def vente(request):
-  vente_instance = Vente()
-    # Calculer le montant total des ventes
-  montant_total_ventes = vente_instance.montant_total_ventes()
-  return render(request, 'centre/afficher_ventes.html', {'montant_total_ventes': montant_total_ventes})
 
 #charts Vente et Client
 def chart_view(request):

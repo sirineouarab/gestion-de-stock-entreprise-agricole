@@ -1,6 +1,6 @@
 from django import forms
 from .models import Produit, Client, Fournisseur, Centre, Employe, Achat,Reglement, Transfert, PayementCredit, Vente
-from django_select2.forms import ModelSelect2Widget
+#from django_select2.forms import ModelSelect2Widget
 
 
 class ProduitForm(forms.ModelForm):

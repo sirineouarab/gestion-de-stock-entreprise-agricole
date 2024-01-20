@@ -42,15 +42,16 @@
               <br/>
          
          </div>
-       
-           {{ form.PayEnt }}
-                
-                {% if not form.PayEnt.value %}
-                    <!-- Champ montant_paye pour saisir le montant payé -->
-                    <label>Montant Payé : </label>
-                    {{ form.montant_paye }}
-                {% endif %}
-              
+       <!-- Ajoutez ces lignes dans le formulaire où vous voulez afficher ces champs -->
+        <label for="id_pay_ent">Paiement complet :</label>
+         {{ form.PayEnt }}
+         <br>
+         {% if not form.pay_ent.value %}
+           <label for="id_montant_paye">Montant payé :</label>
+           {{ form.montant_paye }}
+          <br>
+        {% endif %}
+
           <div class="fieldWrapper">
             {{ form.prix_total.label_tag }}
             {{ form.prix_total }}
