@@ -208,7 +208,9 @@ def list_transferts_recu(request):
 
 def calculate_total_and_benefit(request):
     total_ventes = Vente.objects.aggregate(Sum('prix_total'))['prix_total__sum'] or 0
-    total_transferts_recu = TransfertRecu.objects.aggregate(Sum('cost'))['cost__sum'] or 0
+    centre1_instance = Centre.objects.get(DesignationCentre='centre1')
+   
+    total_transferts_recu = Transfert.objects.filter(centre=centre1_instance).aggregate(Sum('cost'))['cost__sum'] or 0
 
     benefit = total_ventes - total_transferts_recu
 
@@ -266,3 +268,17 @@ def add_reglement(request):
 def get_client_credit(request, client_id):
     client = Client.objects.get(pk=client_id)
     return JsonResponse({'credit': client.credit})
+
+
+
+from magasin.models import Transfert, Centre
+
+def _transferts_(request):
+    # Assuming 'centre1' is the DesignationCentre you are looking for
+    centre1_instance = Centre.objects.get(DesignationCentre='centre1')
+
+    # Retrieve all Transfert instances where centre attribute is equal to centre1_instance
+    transferts_for_centre1 = Transfert.objects.filter(centre=centre1_instance)
+
+    context = {'transferts_for_centre1': transferts_for_centre1}
+    return render(request, 'centre/list_transferts_recu.html', context)

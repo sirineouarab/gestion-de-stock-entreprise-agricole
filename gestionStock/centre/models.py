@@ -8,6 +8,8 @@ from magasin.models import Produit as ProduitTransfert
 class Centre(models.Model):
     CodeCentre = models.AutoField(primary_key=True)
     DesignationCentre = models.CharField(max_length=40)
+    def __str__(self):
+        return self.DesignationCentre
 
 class TransfertRecu(models.Model):
     produitTr = models.ForeignKey(ProduitTransfert, on_delete=models.CASCADE)

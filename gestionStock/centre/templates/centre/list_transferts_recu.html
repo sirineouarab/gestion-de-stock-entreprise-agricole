@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Employés</title>
+    <title>Liste des Transferts</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
@@ -17,18 +17,18 @@
     <thead>
       <tr>
         <th>Produit</th>
-        <th>Date de Transfert</th>
-        <th>Quantité Transférée</th>
-        <th>Coût</th>
+        <th>Date Transfert</th>
+        <th>Quantity Transfert</th>
+        <th>Cost</th>
       </tr>
     </thead>
     <tbody>
-      {% for transfert_recu in transferts_recu %}
+      {% for transfert in transferts_for_centre1 %}
         <tr>
-          <td>{{ transfert_recu.produitTr }}</td>
-          <td>{{ transfert_recu.dateTransfert }}</td>
-          <td>{{ transfert_recu.qteTransfert }}</td>
-          <td>{{ transfert_recu.cost }}</td>
+          <td>{{ transfert.produit }}</td>
+          <td>{{ transfert.dateTransfert }}</td>
+          <td>{{ transfert.qteTransfert }}</td>
+          <td>{{ transfert.cost }}</td>
         </tr>
       {% endfor %}
     </tbody>
