@@ -106,7 +106,7 @@ class EmployeManagementView(View):
         # Partie 1 - Overview
         total_employees = Employe.objects.count()
         current_date = date.today()
-        present_percentage = 100 * Absence.objects.filter(dateAbsence=current_date).values('emp').annotate(count=Count('emp')).count() / total_employees
+      
         total_absences = Absence.objects.filter(dateAbsence=current_date).count()
 
         # Partie 2 - Chart d'absence pour l'année
