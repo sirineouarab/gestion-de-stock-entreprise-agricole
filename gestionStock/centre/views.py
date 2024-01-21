@@ -231,27 +231,38 @@ def update_credit(client_id):
     credit_amount = get_credit_amount(client_id)
     return JsonResponse({'credit_amount': credit_amount})
 
+# views.py
+
+
 def add_reglement(request):
-    form = ReglementForm()
+    clients = Client.objects.all()
+    form = ReglementForm(request.POST or None)
 
-    # Handle form submission
     if request.method == 'POST':
-        form = ReglementForm(request.POST)
         if form.is_valid():
-            reglement = form.save()
+            montant_paid = form.cleaned_data['montantReg']
+            client = form.cleaned_data['client']
 
-            # Update credit for the selected client
-            update_credit(reglement.client.CodeC)
+            # Check if the amount paid is greater than the client's credit
+            if montant_paid > client.credit:
+               return redirect('add_regement') 
+                # Handle the case where the amount paid is greater than the credit
+                # You can add custom logic here, e.g., display an error message or take specific actions
 
-            return redirect('add_reglement')  # Redirect to clear the form
+            else:
+                # Save the reglement
+                reglement = form.save()
+                # Update the client's credit
+                client.credit -= montant_paid
+                client.save()
 
-    # Pass the initial credit amount to the template
-    client_id = request.POST.get('client', None)
-    initial_credit = get_credit_amount(client_id)
-    
-    return render(request, 'centre/add_reglement.html', {'form': form, 'initial_credit': initial_credit})
+                return redirect('add_reglement')  # Redirect to a success page or another page
 
-def get_client_credit(request):
-    client_id = request.GET.get('client_id')
-    credit_amount = get_credit_amount(client_id)
-    return JsonResponse({'credit_amount': credit_amount})
+    context = {'form': form, 'clients': clients}
+    return render(request, 'centre/add_reglement.html', context)
+
+
+
+def get_client_credit(request, client_id):
+    client = Client.objects.get(pk=client_id)
+    return JsonResponse({'credit': client.credit})

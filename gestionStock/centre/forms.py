@@ -46,3 +46,8 @@ class ReglementForm(forms.ModelForm):
     class Meta:
         model = Reglement
         fields = ['client', 'montantReg', 'dateReg']
+        widgets = {
+            'dateReg': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'client': forms.Select(attrs={'class': 'form-control'}),
+            'montantReg': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
