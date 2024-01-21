@@ -19,10 +19,10 @@
       <ul class="navbar-nav">
        
         <a href= "{% url 'employe-management' %}" class="text-decoration-none text-dark"
-          ><li class="m-3">Gestion Employees</li></a
+          ><li class="m-3">Gestion Employes</li></a
         >
         <a href=" {% url 'record_sale' %}" class="text-decoration-none text-dark"
-          ><li class="m-3">Ajout Vente</li></a
+          ><li class="m-3">Ajouter Vente</li></a
         >
         <a href="{% url 'afficher_vente' %}" class="text-decoration-none text-dark"
           ><li class="m-3">Liste Vente</li></a
@@ -33,6 +33,9 @@
       <a href="{% url 'analyse' %}" class="text-decoration-none text-dark"
         ><li class="m-3">Analyse Des Ventes </li></a
       >
+      <a href="{% url 'add_reglement' %}" class="text-decoration-none text-dark"
+      ><li class="m-3">Reglement</li></a
+    >
      
       </ul>
     </div>
