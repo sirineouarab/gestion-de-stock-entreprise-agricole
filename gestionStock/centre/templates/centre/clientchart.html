@@ -1,44 +1,20 @@
+{% extends 'centre/base.html' %} {% block content %}{% load static %}
 <head>
+  
+ 
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyse Des Ventes.clients</title>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}" />
+  
     <!-- Add this to your <head> section -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
-<nav class="navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="">Gestionnaire De Stock</a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav">
-       
-        <a href="#" class="text-decoration-none text-dark"
-          ><li class="m-3">Gestion Employees</li></a
-        >
-        <a href="#" class="text-decoration-none text-dark"
-          ><li class="m-3">Vente</li></a
-        >
-        <a href="#" class="text-decoration-none text-dark"
-          ><li class="m-3">Stock</li></a
-        >
-      </ul>
-    </div>
-  </div>
-</nav>
-{% block title %}Top Customer Chart{% endblock %}
+<h2>Top Customers Du Centre</h>
 
-{% block content %}
+
     <canvas id="topCustomerChart" width="60" height="20"></canvas>
 
     <script>
