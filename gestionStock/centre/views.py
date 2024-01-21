@@ -114,7 +114,6 @@ class EmployeManagementView(View):
 
         return render(request,'centre/employe-management.html',{
             'total_employees': total_employees,
-            'present_percentage': present_percentage,
             'total_absences': total_absences,
             'absences_data': absences_data,
         })
