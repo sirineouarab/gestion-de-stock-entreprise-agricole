@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'centre/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyse Des Ventes </title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <!-- Produits -->
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Ventes</h2>
+        </div>
+      </div>
+
+      <div>
+        <a href="{% url 'chart1-view' %}" class="btn btn-primary"
+          >Top Sallers </a
+        >
+        <a href="{% url 'chart2-view' %}" class="btn btn-primary"
+          >Top clients </a
+        >
+      
+      </div>
+      <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Updated styling for card title -->
+                        <h5 class="card-title font-weight-bold text-center text-uppercase text-muted">Les Taux d'évolution</h5>
+
+                            <div class="code-block">
+                                <!-- Your code goes here -->
+                               
+<h5>Taux d'évolution de la valeur des ventes: {{ total_ventes }}</h5>
+<h5>Total des transferts recu: {{ total_transferts_recu }}</h5>
+<h5>Taux d'évolution de bénéfice: {{ benefit }}</h5>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+   
+    </div>
+    <br/>
+    
+    
+   
+ 
+
+    {% endblock %}
+  </body>
+</html>
+<h4 class="card-title">Les Taux d'évolution </h4>
+    
+                            <div class="code-block">
+                                <!-- Your code goes here -->
+                               
+<h5>Taux d'évolution de la valeur des ventes: {{ total_ventes }}</h5>
+<h5>Total des transferts recu: {{ total_transferts_recu }}</h5>
+<h5>Taux d'évolution de bénéfice: {{ benefit }}</h5>

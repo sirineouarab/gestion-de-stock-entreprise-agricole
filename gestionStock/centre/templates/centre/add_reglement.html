@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'centre/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ajouter Règlement</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+
+<!-- add_reglement.html -->
+<div class="container">
+    <h1>Add Reglement</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <!-- Display credit amount based on the chosen client -->
+        <p id="creditAmount">Credit: {{ initial_credit }}</p>
+
+        <button type="submit">Save Reglement</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var clientSelect = document.getElementById('id_client');
+    var creditAmount = document.getElementById('creditAmount');
+
+    function updateCredit() {
+        // Update credit amount based on the chosen client
+        var selectedOption = clientSelect.options[clientSelect.selectedIndex];
+        var clientCredit = parseFloat(selectedOption.getAttribute('data-credit')) || 0;
+        creditAmount.textContent = `Credit: ${clientCredit.toFixed(2)}`;
+    }
+
+    // Call updateCredit on page load to handle pre-filled forms
+    updateCredit();
+
+    // Additional logic for handling client selection change
+    clientSelect.addEventListener('change', updateCredit);
+});
+</script>
+
+</body>
+</html>
+{% endblock %}
