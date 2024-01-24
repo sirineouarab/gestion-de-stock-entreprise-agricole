@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'centre2/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tables des ventes</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <!-- Produits -->
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Ventes</h2>
+        </div>
+      </div>
+
+      <form
+        method="get"
+        action="#"
+        class="form-inline"
+      >
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="search"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Client</th>
+            <th scope="col">Produit</th>
+            <th scope="col">Quantité Vendu</th>
+            <th scope="col">Prix Unitaire</th>
+            <th scope="col">Prix total</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if ventes|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for vente in ventes %}
+          <tr>
+            <td>{{ vente.CodeV }}</td>
+            <td>{{ vente.client }}</td>
+            <td>{{ vente.produit }}</td>
+            <td>{{ vente.qteVente}}</td>
+            <td>{{ vente.prixUniVente}}</td>
+            <td>{{ vente.prix_total}}</td>
+
+            <td>
+              <a
+                href="#"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
+            </td>
+            <td>
+              <a
+                href="#"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <br/>
+    
+    
+   
+ 
+
+    {% endblock %}
+  </body>
+</html>

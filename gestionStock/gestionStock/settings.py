@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'dashboard.apps.DashboardConfig',
     'centre.apps.CentreConfig',
     'centre2.apps.Centre2Config',
+    'centre3.apps.Centre3Config',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

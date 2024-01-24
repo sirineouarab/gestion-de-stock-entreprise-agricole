@@ -12,7 +12,7 @@ class Centre(models.Model):
         return self.DesignationCentre
 
 class TransfertRecu(models.Model):
-    produitTr = models.ForeignKey(ProduitTransfert, on_delete=models.CASCADE,related_name='transfertrecu_produit_tr')
+    produitTr = models.ForeignKey(ProduitTransfert, on_delete=models.CASCADE,related_name='transfertrecu_produit_tr3')
     centre = models.ForeignKey(Centre, on_delete=models.CASCADE)
     dateTransfert = models.DateField()
     qteTransfert = models.IntegerField()
