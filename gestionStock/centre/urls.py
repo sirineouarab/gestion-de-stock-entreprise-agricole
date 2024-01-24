@@ -21,7 +21,7 @@ urlpatterns = [
     path('avance/', views.paiement, name='avance'),
     path('payroll/', views.liste_employes, name='payroll'),
     path('list_transferts_recu/', views._transferts_, name='list_transferts_recu'),
-   path('add_reglement/', add_reglement, name='add_reglement'),
-     path('analyse/', views.calculate_total_and_benefit, name='analyse'),
-      path('get_client_credit/<int:client_id>/', views.get_client_credit, name='get_client_credit'),
+    path('add_reglement/', add_reglement, name='add_reglement'),
+    path('analyse/', views.calculate_total_and_benefit, name='analyse'),
+    path('get_client_credit/<int:client_id>/', views.get_client_credit, name='get_client_credit'),
 ]

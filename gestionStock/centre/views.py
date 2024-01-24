@@ -12,6 +12,7 @@ import datetime
 from datetime import date,timedelta,datetime
 from dateutil.relativedelta import relativedelta
 from django.http import JsonResponse
+from django.db.models import F
 from .serializers import ProduitVenteSerializer,TopCustomerSerializer,AbsenceChartSerializer
 
 def afficher_ventes(request):
@@ -19,16 +20,6 @@ def afficher_ventes(request):
     return render(request,'centre/afficher_ventes.html',{'ventes':ventes})
 
 
-def update_stock_after_sale(vente_id):
-    vente = get_object_or_404(Vente, pk=vente_id)
-
-    # Vérifier si le produit a suffisamment de stock
-    if vente.produit.qteStock >= vente.qteVente:
-        # Mettre à jour la quantité du produit
-        vente.produit.qteStock -= vente.qteVente
-        vente.produit.save()
-    else:
-        return HttpResponseBadRequest("Quantité de produit insuffisante en stock.")
 
 def record_sale(request):
     template_name = 'centre/record_sale.html'
@@ -38,10 +29,10 @@ def record_sale(request):
         if form.is_valid():
             sale = form.save(commit=False)
             sale.prix_total = sale.qteVente * sale.prixUniVente
-            sale.save()
+            
 
             # Appeler la fonction pour mettre à jour le stock
-            update_stock_after_sale(sale.pk)
+          
             if not sale.PayEnt:
                 # Si le paiement n'est pas entièrement effectué, traiter le montant payé
                 montant_paye = form.cleaned_data.get('montant_paye')
@@ -58,7 +49,16 @@ def record_sale(request):
                 sale.client.save()
             if  sale.PayEnt:    
                 sale.montant_paye=sale.prix_total
-                sale.save()
+            sale.save()
+            # Vérifier si le produit a suffisamment de stock
+            if sale.produit.qteStock >= sale.qteVente:
+       
+        # Mettre à jour la quantité du produit
+                 sale.produit.qteStock -=  sale.qteVente
+                 sale.produit.save()
+            else:
+               return HttpResponseBadRequest("Quantité de produit insuffisante en stock.")
+ 
             return redirect('afficher_vente')
     form = SaleForm()
 

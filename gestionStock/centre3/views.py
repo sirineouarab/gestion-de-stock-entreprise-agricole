@@ -18,12 +18,12 @@ from django.http import JsonResponse
 
 def afficher_ventes(request):
     ventes=Vente.objects.all()
-    return render(request,'centre2/afficher_ventes.html',{'ventes':ventes})
+    return render(request,'centre3/afficher_ventes.html',{'ventes':ventes})
 
 
 
 def record_sale(request):
-    template_name = 'centre2/record_sale.html'
+    template_name = 'centre3/record_sale.html'
 
     if request.method == 'POST':
         form = SaleForm(request.POST)
@@ -60,7 +60,7 @@ def record_sale(request):
             else:
                return HttpResponseBadRequest("Quantité de produit insuffisante en stock.")
  
-            return redirect('afficher_vente2')
+            return redirect('afficher_vente3')
     form = SaleForm()
 
-    return render(request, 'centre2/record_sale.html', {'form': form})
+    return render(request, 'centre3/record_sale.html', {'form': form})
