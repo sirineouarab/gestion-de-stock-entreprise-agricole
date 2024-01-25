@@ -72,3 +72,17 @@ class ReglementForm(forms.ModelForm):
             'client': forms.Select(attrs={'class': 'form-control'}),
             'montantReg': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+
+
+class EmployeForm(forms.ModelForm):
+    class Meta:
+        model = Employe
+        fields = ['nomPrenomE', 'adresseE','telephoneE', 'salaireJour','centre']
+        widgets = {
+        'nomPrenomE': forms.TextInput(attrs={'class':'form-control'}),
+        'adresseE': forms.TextInput(attrs={'class':'form-control'}),
+        'telephoneE': forms.NumberInput(attrs={'class':'form-control'}),
+        'salaireJour': forms.NumberInput(attrs={'class':'form-control'}),
+        'centre': forms.Select(attrs={'class':'form-control'}),
+        }        

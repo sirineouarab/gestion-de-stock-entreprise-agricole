@@ -3,7 +3,7 @@
 from django.urls import path
 from . import views
 from django.contrib import admin
-from .views import ProduitVenteChart,chart_view,TopCustomerChart,chart_view2,EmployeManagementView,add_reglement, AbsenceChartAPIView,absence_create,paiement,liste_employes,list_transferts_recu,calculate_total_and_benefit,get_client_credit,_transferts_,tablesManagement,deleteProduct,searchProduct,newProduct,editProduct,editClient,newClient,searchClient,deleteClient,deleteVente
+from .views import ProduitVenteChart,chart_view,TopCustomerChart,chart_view2,EmployeManagementView,add_reglement, AbsenceChartAPIView,absence_create,paiement,liste_employes,list_transferts_recu,calculate_total_and_benefit,get_client_credit,_transferts_,tablesManagement,deleteProduct,searchProduct,newProduct,editProduct,editClient,newClient,searchClient,deleteClient,deleteVente,newEmploye
 
 
 
@@ -39,5 +39,11 @@ urlpatterns = [
     path('searchClient/',views.searchClient,name='search clientC'),
     #vente
      path('deleteVente/<int:id>',views.deleteVente,name='delete venteC'),
+
+     #empl
+     path('newClient/',views.newClient,name='new employeC'), 
+      path('editEmploye/<int:id>',views.editEmploye,name='edit employeC'),
+    path('deleteEmploye/<int:id>',views.deleteEmploye,name='delete employeC'),
+    path('searchEmploye/',views.searchEmploye,name='search employeC'),
    
 ]

@@ -6,7 +6,7 @@ from .models import Produit,Vente,Client,Employe, Absence, Avance,CreditPayment,
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .forms import SaleForm,AbsenceForm,AvanceForm,ReglementForm,ProduitForm,ClientForm
+from .forms import SaleForm,AbsenceForm,AvanceForm,ReglementForm,ProduitForm,ClientForm,EmployeForm
 from django.db.models import Sum,Count
 import datetime
 from datetime import date,timedelta,datetime
@@ -399,3 +399,43 @@ def deleteVente(request, id):
     else:
         return render(request, "centre/deleteVente.html", {'vente': vente_delete})
 
+
+
+#emp
+def newEmploye(request):
+    if request.method == 'POST':
+        form = EmployeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = EmployeForm()
+        return redirect('payroll')
+    else:
+        form = EmployeForm() 
+    return render(request,"centre/addEmp.html",{"form":form})
+
+def editEmploye(request, id):
+    employe_edit = get_object_or_404(Employe, CodeE=id)
+    if request.method=='POST':
+        employe_save= EmployeForm(request.POST,request.FILES,instance=employe_edit)
+        if employe_save.is_valid():
+            employe_save.save()
+            return redirect('payroll')
+    else:
+        employe_save= EmployeForm(instance=employe_edit)
+    return render(request,"centre/editEmp.html",{'employe':employe_save})
+
+def deleteEmploye(request, id):
+    employe_delete = get_object_or_404(Employe, CodeE=id)
+    if request.method=='POST': 
+        employe_delete.delete()
+        return redirect('payroll')
+    else:
+        return render(request,"centre/deleteEmp.html",{'Employe':employe_delete} )
+    
+def searchEmploye(request):
+    if request.method == "GET":
+        query=request.GET['search']
+        if query:
+            employes=Employe.objects.filter(nomPrenomE__contains=query)
+            return render(request,'centre/searchEmp.html', {'employes': employes })
+    return render(request,'centre/searchEmp.html')
