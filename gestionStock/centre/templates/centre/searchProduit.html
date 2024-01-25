@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'centre/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rechercher Produit</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <a
+      href="{% url 'tablesManagementC' %}"
+      class="btn btn-outline-primary my-3 mx-4"
+      >Retourner</a
+    >
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Resultats :</h2>
+        </div>
+      </div>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Désignation</th>
+            <th scope="col">Quantité en Stock</th>
+            <th scope="col">Prix HT</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if produits|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for produit in produits %}
+          <tr>
+            <td>{{ produit.produit }}</td>
+            <td>{{ produit.Designation }}</td>
+            <td>{{ produit.qteStock }}</td>
+            <td>{{ produit.HTProd }}</td>
+
+            <td>
+              <a
+                href="{% url 'edit productC' produit.produit %}"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
+            </td>
+            <td>
+              <a
+                href="{% url 'delete productC' produit.produit %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% endblock %}
+  </body>
+</html>

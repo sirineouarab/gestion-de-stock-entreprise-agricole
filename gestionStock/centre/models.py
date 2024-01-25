@@ -72,7 +72,7 @@ class Vente(models.Model):
 class CreditPayment(models.Model):
     CodePayCredit = models.AutoField(primary_key=True)
     date = models.DateField()
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    clientc = models.ForeignKey(Client, on_delete=models.CASCADE)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
     vente = models.ForeignKey(Vente, on_delete=models.CASCADE)
     
