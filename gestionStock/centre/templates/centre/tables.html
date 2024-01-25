@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% extends 'centre/base.html' %} {% block content %} {% load static %}
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tables</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  </head>
+  <body>
+    <!-- Produits -->
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Produits</h2>
+
+          <div>
+           
+            <a href="{% url 'new productC' %}" class="btn btn-primary"
+              >Nouveau Produit +</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <form
+        method="get"
+        action="{% url 'search productC' %}"
+        class="form-inline"
+      >
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="search"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Désignation</th>
+            <th scope="col">Quantité en Stock</th>
+            <th scope="col">Prix HT</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if produits|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for produit in produits %}
+          <tr>
+            <td>{{ produit.produit }}</td>
+            <td>{{ produit.Designation }}</td>
+            <td>{{ produit.qteStock }}</td>
+            <td>{{ produit.HTProd }}</td>
+
+            <td>
+              <a
+                href="{% url 'edit productC' produit.produit %}"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
+            </td>
+            <td>
+              <a
+                href="{% url 'delete productC' produit.produit %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Clients -->
+
+    <div class="col-md-10 col-12 mx-auto mt-4">
+      <div class="row">
+        <div class="d-flex justify-content-between">
+          <h2>Liste des Clients</h2>
+
+          <div>
+           
+            <a href="{% url 'new clientC' %}" class="btn btn-primary"
+              >Nouveau Client +</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <form method="get" action="{% url 'search clientC' %}" class="form-inline">
+        <div class="d-flex my-3">
+          <input
+            class="form-control mr-sm-2"
+            type="search"
+            placeholder="Rechercher"
+            aria-label="Search"
+            name="search"
+          />
+          <button class="btn btn-secondary m-2 my-sm-0" type="submit">
+            Rechercher
+          </button>
+        </div>
+      </form>
+
+      <table class="table table-hover table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Code</th>
+            <th scope="col">Nom Prénom</th>
+            <th scope="col">Adresse</th>
+            <th scope="col">Telephone</th>
+            <th scope="col">Credit</th>
+            <th scope="col">Modifier</th>
+            <th scope="col">Supprimer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if clients|length == 0 %}
+          <tr>
+            <th scope="row">-</th>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+          {% endif %} {% for client in clients %}
+          <tr>
+            <td>{{ client.CodeC }}</td>
+            <td>{{ client.nomPrenomC }}</td>
+            <td>{{ client.adresseC }}</td>
+            <td>{{ client.telephoneC }}</td>
+            <td>{{ client.credit }}</td>
+
+            <td>
+              <a
+                href="{% url 'edit clientC' client.CodeC %}"
+                class="btn btn-outline-secondary"
+                >Modifier</a
+              >
+            </td>
+            <td>
+              <a
+                href="{% url 'delete clientC' client.CodeC %}"
+                class="btn btn-danger"
+                >Supprimer</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+      
+        </tbody>
+      </table>
+        
+    </div>
+
+   {% endblock content%}

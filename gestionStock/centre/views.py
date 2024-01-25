@@ -6,7 +6,7 @@ from .models import Produit,Vente,Client,Employe, Absence, Avance,CreditPayment,
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .forms import SaleForm,AbsenceForm,AvanceForm,ReglementForm
+from .forms import SaleForm,AbsenceForm,AvanceForm,ReglementForm,ProduitForm,ClientForm
 from django.db.models import Sum,Count
 import datetime
 from datetime import date,timedelta,datetime
@@ -236,7 +236,7 @@ def update_credit(client_id):
 
 
 def add_reglement(request):
-    clients = Client.objects.all()
+    clients = Client.objects.filter(creditpayment__isnull=False).distinct()
     form = ReglementForm(request.POST or None)
 
     if request.method == 'POST':
@@ -246,7 +246,7 @@ def add_reglement(request):
 
             # Check if the amount paid is greater than the client's credit
             if montant_paid > client.credit:
-               return redirect('add_regement') 
+               return redirect('add_reglement') 
                 # Handle the case where the amount paid is greater than the credit
                 # You can add custom logic here, e.g., display an error message or take specific actions
 
@@ -281,3 +281,121 @@ def _transferts_(request):
 
     context = {'transferts_for_centre1': transferts_for_centre1}
     return render(request, 'centre/list_transferts_recu.html', context)
+
+
+####
+
+def tablesManagement(request):
+    produits = Produit.objects.all()
+    clients = Client.objects.all()
+    return render(request, 'centre/tables.html', {'produits': produits,'clients': clients})
+
+
+
+def newProduct(request):
+    if request.method == 'POST':
+        form = ProduitForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = ProduitForm()
+        return redirect('tablesManagementC')
+    else:
+        form = ProduitForm() 
+    return render(request,"centre/addProduit.html",{"form":form})
+
+def editProduct(request, id):
+    # trouver le produit concerné
+    product_edit = get_object_or_404(Produit, produit=id)
+    if request.method=='POST':
+        product_save= ProduitForm(request.POST,request.FILES,instance=product_edit)
+        if product_save.is_valid():
+            product_save.save()
+            return redirect('tablesManagementC')
+    else:
+        # instance pour afficher valeurs courantes
+        product_save= ProduitForm(instance=product_edit) 
+    return render(request,"centre/editProduit.html",{'produit':product_save})
+
+def deleteProduct(request, id):
+    product_delete = get_object_or_404(Produit, produit=id)
+    if request.method=='POST': 
+        product_delete.delete()
+        return redirect('tablesManagementC')
+    else:
+        return render(request,"centre/deleteProduit.html",{'produit': product_delete} )
+    
+def searchProduct(request):
+    if request.method == "GET":
+        query=request.GET['search']
+        if query:
+            produits=Produit.objects.filter(Designation__contains=query)
+            return render(request,'centre/searchProduit.html', {'produits': produits })
+    return render(request,'centre/searchProduit.html')
+
+
+
+
+# CRUD pour clients
+def newClient(request):
+    if request.method == 'POST':
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form = ClientForm()
+        return redirect('tablesManagementC')
+    else:
+        form = ClientForm() 
+    return render(request,"centre/addClient.html",{"form":form})
+
+def editClient(request, id):
+    client_edit = get_object_or_404(Client, CodeC=id)
+    if request.method=='POST':
+        client_save= ClientForm(request.POST,request.FILES,instance=client_edit)
+        if client_save.is_valid():
+            client_save.save()
+            return redirect('tablesManagementC')
+    else:
+        client_save= ClientForm(instance=client_edit)
+    return render(request,"centre/editClient.html",{'client':client_save})
+
+def deleteClient(request, id):
+    client_delete = get_object_or_404(Client, CodeC=id)
+    if request.method=='POST': 
+        client_delete.delete()
+        return redirect('tablesManagementC')
+    else:
+        return render(request,"centre/deleteClient.html",{'client': client_delete} )
+    
+def searchClient(request):
+    if request.method == "GET":
+        query=request.GET['search']
+        if query:
+            clients=Client.objects.filter(nomPrenomC__contains=query)
+            return render(request,'centre/searchClient.html', {'clients': clients })
+    return render(request,'centre/searchClient.html')
+
+#vente
+
+def deleteVente(request, id):
+    vente_delete = get_object_or_404(Vente, CodeV=id)
+
+    if request.method == 'POST':
+        produit = vente_delete.produit
+        #restockage du produit
+        produit.qteStock += vente_delete.qteVente
+        produit.save()
+
+        if not vente_delete.PayEnt:
+            client = vente_delete.client
+            #supprimer le credit du client
+            payementCredits = CreditPayment.objects.filter(vente=id)
+            montantTotal = vente_delete.qteVente * vente_delete.prixUniVente
+            resteAPayer = montantTotal - sum(payementCredit.amount_paid for payementCredit in payementCredits)
+            client.credit -= resteAPayer
+            client.save()
+
+        vente_delete.delete()
+        return redirect('afficher_vente')
+    else:
+        return render(request, "centre/deleteVente.html", {'vente': vente_delete})
+

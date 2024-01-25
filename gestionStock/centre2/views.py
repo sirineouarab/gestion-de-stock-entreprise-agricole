@@ -64,3 +64,4 @@ def record_sale(request):
     form = SaleForm()
 
     return render(request, 'centre2/record_sale.html', {'form': form})
+#tables 
